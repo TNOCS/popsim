@@ -1,0 +1,22 @@
+{
+  "name": "population_service",
+  "version": "1.0.0",
+  "description": "Based on the BAG and CBS data, generate an initial population distribution, assigning people to houses.",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/geojson": "^1.0.2",
+    "@types/kafka-node": "^1.3.2",
+    "@types/node": "^7.0.18",
+    "typescript": "^2.3.2"
+  },
+  "dependencies": {
+    "kafka-node": "^1.6.2"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "logging": true,
+  "kafka": {
+    "clientId": "cbsSvc",
+    "host": "localhost:2181",
+    "subscription": {
+      "topics": [{
+        "topic": "areaChannel",
+        "partition": 0
+      }],
+      "options": {
+        "autoCommit": false
+      }
+    },
+    "publication": {
+      "cbs": {
+        "topic": "cbsChannel",
+        "partition": 0
+      }
+    }
+  },
+  "user": "bag_user",
+  "database": "cbs",
+  "password": "SECRET",
+  "host": "134.221.20.240",
+  "port": 8432,
+  "max": 10,
+  "idleTimeoutMillis": 30000
+}

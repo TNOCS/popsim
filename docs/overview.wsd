@@ -1,0 +1,70 @@
+@startuml
+title Preparing a simulation run
+
+boundary GUI
+collections Kafka as hub
+control OsmSvc as osm
+control CbsSvc as cbs
+control PlanningSvc as pls
+database PostgreSQL as pg
+' actor Foo1
+' entity Foo4
+' database Foo5
+
+GUI -> hub: simAreaDefined event
+hub -> osm: simAreaDefined event
+hub -> cbs: simAreaDefined event
+hub -> pls: simAreaDefined event
+osm -> pg: query buildings
+osm -> hub: buildingsData event
+hub -> pls: buildingsData event
+hub -> GUI: buildingsData event
+cbs -> pg: query census data
+cbs -> hub: censusStats event
+hub -> pls: censusStats event
+hub -> GUI: censusStats event
+pls -> hub: populationData event
+hub -> GUI: populationData event
+
+@enduml
+
+@startuml
+title Running a simulation
+
+boundary GUI
+collections Kafka as hub
+control CrowdSimSvc as css
+hub -> css: buildingsData event
+hub -> css: populationData event
+' The CrowdSimSvc would also need some information
+' on the roads, e.g. where can be people walk. Ignored
+' for now.
+hub --> css: roadData event [NA]
+GUI -> hub: simulationStarted event
+loop running crowd simulation
+  css -> hub: populationUpdated event
+  hub -> GUI: populationUpdated event
+  alt Incident occurs
+    GUI -> hub: incident event
+    hub -> css: incident event
+    css -> css: update plans\nof population
+    css -> hub: populationUpdated event
+    hub -> GUI: populationUpdated event
+  end
+end
+GUI -> hub: simulationStopped event
+@enduml
+
+@startuml
+|SimChannel|
+start
+:foo1;
+|#AntiqueWhite|Swimlane2|
+:foo2;
+:foo3;
+|SimChannel|
+:foo4;
+|Swimlane2|
+:foo5;
+stop
+@enduml
