@@ -1,0 +1,77 @@
+{
+  "logging": true,
+  "kafka": {
+    "clientId": "popSvc",
+    "host": "localhost:2181",
+    "subscription": {
+      "topics": [{
+        "topic": "cbsChannel",
+        "partition": 0
+      }, {
+        "topic": "bagChannel",
+        "partition": 0
+      }],
+      "options": {
+        "autoCommit": false
+      }
+    },
+    "publication": {
+      "population": {
+        "topic": "popChannel",
+        "partition": 0
+      }
+    }
+  },
+  "statistics": {
+    "male": {
+      "allAges": 8475102,
+      "under20": 1954878
+    },
+    "female": {
+      "allAges": 8606405,
+      "under20": 1862295
+    },
+    "singleParentPerc": 26.62,
+    "pairs": {
+      "oneChild": 42.65,
+      "twoChildren": 41.68,
+      "threeOrMoreChildren": 15.67,
+      "threeOrMoreFactor": 3.2
+    },
+    "singleParent": {
+      "oneChild": 61.98,
+      "twoChildren": 29.09,
+      "threeOrMoreChildren": 8.93,
+      "threeOrMoreFactor": 3.2,
+      "aloneWithMother": {
+        "boy": 189688,
+        "girl": 184468
+      },
+      "aloneWithFather": {
+        "boy": 22749,
+        "girl": 18791
+      }
+    }
+  },
+  "guesstimates": {
+    "householdDistribution": [{
+      "maxAreaM2": 85,
+      "singles": 87,
+      "singleParents": 35,
+      "relationships": 10,
+      "pairs": 5
+    }, {
+      "maxAreaM2": 130,
+      "singles": 10,
+      "singleParents": 60,
+      "relationships": 60,
+      "pairs": 55
+    }, {
+      "maxAreaM2": -1,
+      "singles": 3,
+      "singleParents": 5,
+      "relationships": 30,
+      "pairs": 40
+    }]
+  }
+}
