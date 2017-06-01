@@ -1,8 +1,6 @@
-import { range, random, shuffle, householdKey } from './utils';
-import { ICensusProps } from './census-props';
-import { IBuildingProps } from './building-props';
-import { IHousehold, HouseholdType } from './household';
-import { IPerson, Gender, PersonRole, IPopulation, IChildDistribution } from './person';
+import { range, random, shuffle, householdKey } from '@popsim/common';
+import { IHousehold, HouseholdType, IBuildingProps, ICensusProps } from '@popsim/common';
+import { IPerson, Gender, PersonRole, IPopulation, IChildDistribution } from '@popsim/common';
 import { FeatureCollection, GeometryObject } from 'geojson';
 import { config } from './configuration';
 

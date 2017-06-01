@@ -38,6 +38,7 @@ For supermarkets, [these numbers](http://detailhandel.info/index.cfm/branches/le
 
 For [consumer electronics](http://detailhandel.info/index.cfm/branches/consumentenelectronica/):
 
+[Excel version](file://../docs/DetailhanderInfo.xslx)
 Branche;                    shops;    m2;           FTE;
 clothing & sport;           22796;   4662000;    80195;
 supermarkets & food;        10886;   4431000;    132575;

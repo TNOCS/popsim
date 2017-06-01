@@ -19,17 +19,17 @@ docker-compose rm -f -v
 cd ..
 REM PUT %arg% between "" in case it is not defined.
 IF "%arg1%"=="dev" (
-  cd bag
+  cd packages/bag
   echo INSTALLING AND COMPILING
   yarn install
   tsc
-  cd ../cbs
+  cd ../packages/cbs
   yarn install
   tsc
-  cd ../pop
+  cd ../packages/pop
   yarn install
   tsc
-  cd ../gui
+  cd ../packages/gui
   yarn install
   tsc
   cd ..
