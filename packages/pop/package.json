@@ -1,10 +1,11 @@
 {
-  "name": "population_service",
+  "name": "@popsim/pop",
   "version": "1.0.0",
   "description": "Based on the BAG and CBS data, generate an initial population distribution, assigning people to houses.",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "build": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

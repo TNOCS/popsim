@@ -1,4 +1,13 @@
-import { Point } from 'geojson';
+import { FeatureCollection, Feature, Polygon, Point, GeometryObject } from 'geojson';
+
+export interface IBuildingFeatureCollection extends FeatureCollection<GeometryObject> {
+  type: 'FeatureCollection';
+  features: Array<IBuildingFeature>;
+}
+
+export interface IBuildingFeature extends Feature<Polygon> {
+  properties: IBuildingProps;
+}
 
 export interface IBuildingProps {
   id: number;

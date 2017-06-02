@@ -1,10 +1,11 @@
 {
-  "name": "workforce_service",
+  "name": "@popsim/wfs",
   "version": "1.0.0",
   "description": "Based on the BAG and DUO data, generate a workforce populating schools, offices, etc.",
   "main": "dist/index.js",
   "scripts": {
     "start": "node dist/index.js",
+    "build": "tsc -w",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,10 +14,11 @@
   "devDependencies": {
     "@types/geojson": "^1.0.2",
     "@types/kafka-node": "^1.3.2",
-    "@types/node": "^7.0.18",
-    "typescript": "^2.3.2"
+    "@types/node": "^7.0.23",
+    "typescript": "^2.3.4"
   },
   "dependencies": {
+    "@popsim/common": "^1.0.0",
     "kafka-node": "^1.6.2"
   }
 }

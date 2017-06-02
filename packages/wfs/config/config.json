@@ -5,7 +5,7 @@
     "host": "localhost:2181",
     "subscription": {
       "topics": [{
-        "topic": "cbsChannel",
+        "topic": "areaChannel",
         "partition": 0
       }, {
         "topic": "bagChannel",
@@ -16,8 +16,8 @@
       }
     },
     "publication": {
-      "population": {
-        "topic": "popChannel",
+      "workforce": {
+        "topic": "wfsChannel",
         "partition": 0
       }
     }

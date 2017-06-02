@@ -1,3 +1,15 @@
+import { ICensusProps } from './census-props';
+import { FeatureCollection, Feature, Polygon, GeometryObject } from 'geojson';
+
+export interface ICensusFeatureCollection extends FeatureCollection<GeometryObject> {
+  type: 'FeatureCollection';
+  features: Array<ICensusFeature>;
+}
+
+export interface ICensusFeature extends Feature<Polygon> {
+  properties: ICensusProps;
+}
+
 export interface ICensusProps {
   aant_man: number;
   aant_vrouw: number;
