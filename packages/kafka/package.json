@@ -1,0 +1,14 @@
+{
+  "name": "kafka",
+  "version": "1.0.0",
+  "description": "Using `docker-compose` start and run several containers:\r - zookeeper\r - kafka broker\r - schema registry\r - REST interface",
+  "main": "index.js",
+  "scripts": {
+    "up": "docker-compose up -d",
+    "stop": "docker-compose stop",
+    "clean": "docker-compose rm -f -v"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
+  "license": "MIT"
+}
