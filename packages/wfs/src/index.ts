@@ -1,3 +1,4 @@
+import { IBuildingFeatureCollection } from './../../common/src/lib/building-props';
 import { ICensusFeatureCollection } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
@@ -14,7 +15,7 @@ const ee = new PopulationEmitter();
 
 const store: {
   cbs: { [key: string]: ICensusFeatureCollection };
-  bag: { [key: string]: GeoJSON.FeatureCollection<GeometryObject> };
+  bag: { [key: string]: IBuildingFeatureCollection };
 } = {
     cbs: {},
     bag: {}
@@ -51,7 +52,7 @@ const setupConsumer = () => {
         break;
       case 'bagChannel':
         log('BAG message received.');
-        const bag = <GeoJSON.FeatureCollection<GeometryObject>>JSON.parse(message.value);
+        const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
         if (bag.features && bag.features.length > 0) {
           const key = bag.bbox ? bag.bbox.join(', ') : 'undefined';
           store.bag[key] = bag;

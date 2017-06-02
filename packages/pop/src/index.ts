@@ -1,7 +1,7 @@
+import { ICensusFeatureCollection, IBuildingFeatureCollection } from '@popsim/common';
 import { PopulationService } from './lib/population-service';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
-import { GeometryObject } from 'geojson';
 import { EventEmitter } from 'events';
 
 process.title = 'population_service';
@@ -13,8 +13,8 @@ class PopulationEmitter extends EventEmitter { };
 const ee = new PopulationEmitter();
 
 const store: {
-  cbs: { [key: string]: GeoJSON.FeatureCollection<GeometryObject> };
-  bag: { [key: string]: GeoJSON.FeatureCollection<GeometryObject> };
+  cbs: { [key: string]: ICensusFeatureCollection };
+  bag: { [key: string]: IBuildingFeatureCollection };
 } = {
     cbs: {},
     bag: {}
@@ -42,7 +42,7 @@ const setupConsumer = () => {
     switch (topic) {
       case 'cbsChannel':
         log('CBS message received.');
-        const cbs = <GeoJSON.FeatureCollection<GeometryObject>>JSON.parse(message.value);
+        const cbs = <ICensusFeatureCollection>JSON.parse(message.value);
         if (cbs.features && cbs.features.length > 0) {
           const key = cbs.bbox ? cbs.bbox.join(', ') : 'undefined';
           store.cbs[key] = cbs;
@@ -51,7 +51,7 @@ const setupConsumer = () => {
         break;
       case 'bagChannel':
         log('BAG message received.');
-        const bag = <GeoJSON.FeatureCollection<GeometryObject>>JSON.parse(message.value);
+        const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
         if (bag.features && bag.features.length > 0) {
           const key = bag.bbox ? bag.bbox.join(', ') : 'undefined';
           store.bag[key] = bag;
