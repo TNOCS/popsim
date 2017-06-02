@@ -3,6 +3,17 @@
   "packages": [
     "packages/*"
   ],
+  "commands": {
+    "publish": {
+      "ignore": [
+        "ignored-file",
+        "*.md"
+      ]
+    },
+    "bootstrap": {
+      "ignore": "component-*"
+    }
+  },
   "version": "independent",
   "npmClient": "yarn"
 }
