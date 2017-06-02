@@ -1,6 +1,7 @@
 import { FeatureCollection, Feature, Polygon, Point, GeometryObject } from 'geojson';
 
 export interface IBuildingFeatureCollection extends FeatureCollection<GeometryObject> {
+  requestId: number;
   type: 'FeatureCollection';
   features: Array<IBuildingFeature>;
 }

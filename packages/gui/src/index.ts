@@ -1,5 +1,5 @@
+import { IAreaMessage } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
-import { FeatureCollection, GeometryObject } from 'GeoJSON';
 import { config } from './lib/configuration';
 
 const log = config.logging ? console.log : () => { };
@@ -52,7 +52,7 @@ const setupProducer = () => {
     }];
     log(`Sending message to topic ${options.area.topic}/${options.area.partition}: ${msg}`);
     producer.send(payloads, (err, data) => logError(data));
-  }
+  };
 
   producer.on('ready', () => {
     log(`Producer ready.`);
@@ -65,15 +65,17 @@ const { sender, producer } = setupProducer();
 const consumer = setupConsumer(sender);
 
 setTimeout(() => {
-  const newAreaEvent = {
+  const newAreaEvent = <IAreaMessage>{
     id: 1,
+    simulationStartTime: { hour: 6, min: 0, day: 'mo' },
+    simulationEndTime: { hour: 6, min: 0, day: 'tu' },
     bbox: [5.474495887756348, 51.44190471270124, 5.483808517456055, 51.43532386882376]
   };
   sender(JSON.stringify(newAreaEvent));
 }, 2000);
 
 process.on('SIGINT', function () {
-  console.log("Caught interrupt signal");
+  log('Caught interrupt signal');
 
   producer.close(() => {
     consumer.close(true, () => {

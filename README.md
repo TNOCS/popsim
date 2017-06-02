@@ -8,7 +8,7 @@ Install the following dependencies if you haven't got them already:
 npm i -g lerna yarn
 ```
 
-Initialise the repo
+Initialise the repo (NOTE: You need to run this command also when adding a new package dependency, after which in vs-code, you need to reload your window)
 ```console
 yarn run install
 ```

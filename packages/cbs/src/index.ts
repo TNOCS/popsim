@@ -1,3 +1,4 @@
+import { IMessage, ISimRequestMessage, ICensusFeatureCollection } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { FeatureCollection, GeometryObject, Feature, Polygon } from 'GeoJSON';
 import * as area from '@turf/area';
@@ -69,7 +70,7 @@ const setupCbsSvc = () => {
   return query;
 };
 
-const setupConsumer = (svc: (bbox: number[]) => Promise<FeatureCollection<GeometryObject>>, send: (msg: string) => void) => {
+const setupConsumer = (svc: (bbox: number[]) => Promise<ICensusFeatureCollection>, send: (msg: string) => void) => {
   const options = conOpt.subscription;
   const topics = options.topics.map(t => t.topic);
   const client = new Client(conOpt.host, conOpt.clientId + '_client');
@@ -84,13 +85,14 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<FeatureCollection<Geomet
     });
   });
 
-  consumer.on('message', async (message: { topic: string; value: string }) => {
+  consumer.on('message', async (message: IMessage) => {
     const topic = message.topic;
     switch (topic) {
       case 'areaChannel':
-        const msg: { id: string; bbox: number[] } = JSON.parse(message.value);
+        const msg = <ISimRequestMessage> JSON.parse(message.value);
         const geojson = await svc(msg.bbox);
         geojson.bbox = msg.bbox;
+        geojson.requestId = msg.id;
         send(JSON.stringify(geojson));
         break;
       default:

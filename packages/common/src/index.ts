@@ -1,6 +1,10 @@
-export { IPerson, Gender, IPopulation, PersonRole, IChildDistribution } from './lib/person';
-export { ICensusProps, ICensusFeature, ICensusFeatureCollection } from './lib/census-props';
-export { IBuildingProps, IBuildingFeature, IBuildingFeatureCollection } from './lib/building-props';
-export { IMessage } from './lib/message';
-export { IHousehold, HouseholdType } from './lib/household';
-export { clone, householdKey, random, range, shuffle } from './lib/utils';
+export * from './lib/person';
+export * from './lib/census-props';
+export * from './lib/building-props';
+export * from './lib/message';
+export * from './lib/household';
+export * from './lib/utils';
+export * from './lib/population-message';
+export * from './lib/sim-request-message';
+export * from './lib/logger';
+export * from './lib/workplace';

@@ -1,22 +1,25 @@
-import { ICensusFeatureCollection, IBuildingFeatureCollection } from '@popsim/common';
+import { ISimRequestMessage, IMessage, IHousehold, IPopulationMsg, IBuildingFeatureCollection, logger } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
+import { WorkforceService } from './lib/workforce-service';
 
-process.title = 'population_service';
+process.title = 'workforce_service';
 
-const log = config.logging ? console.log : () => undefined;
-const logError = console.error;
+const log = logger(config.logging);
+const logError = logger(true, 'ERROR');
 
-class PopulationEmitter extends EventEmitter { };
-const ee = new PopulationEmitter();
+class WorkforceEmitter extends EventEmitter { };
+const ee = new WorkforceEmitter();
 
 const store: {
-  cbs: { [key: string]: ICensusFeatureCollection };
-  bag: { [key: string]: IBuildingFeatureCollection };
+  pop: { [key: number]: IPopulationMsg };
+  bag: { [key: number]: IBuildingFeatureCollection };
+  area: { [key: number]: ISimRequestMessage };
 } = {
-    cbs: {},
-    bag: {}
+    pop: {},
+    bag: {},
+    area: {}
   };
 
 const conOpt = config.kafka;
@@ -39,22 +42,24 @@ const setupConsumer = () => {
   consumer.on('message', (message: IMessage) => {
     const topic = message.topic;
     switch (topic) {
-      case 'cbsChannel':
-        log('CBS message received.');
-        const cbs = <ICensusFeatureCollection>JSON.parse(message.value);
-        if (cbs.features && cbs.features.length > 0) {
-          const key = cbs.bbox ? cbs.bbox.join(', ') : 'undefined';
-          store.cbs[key] = cbs;
-          ee.emit('messageReceived', { type: 'cbs', key: key });
-        }
+      case 'popChannel':
+        log('Population message received.');
+        const pop = <IPopulationMsg>JSON.parse(message.value);
+        store.pop[pop.requestId] = pop;
+        ee.emit('messageReceived', { type: 'cbs', key: pop.requestId });
+        break;
+      case 'areaChannel':
+        log('Area message received.');
+        const areaMessage = <ISimRequestMessage>JSON.parse(message.value);
+        store.area[areaMessage.id] = areaMessage;
+        ee.emit('messageReceived', { type: 'area', key: areaMessage.id });
         break;
       case 'bagChannel':
         log('BAG message received.');
         const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
         if (bag.features && bag.features.length > 0) {
-          const key = bag.bbox ? bag.bbox.join(', ') : 'undefined';
-          store.bag[key] = bag;
-          ee.emit('messageReceived', { type: 'bag', key: key });
+          store.bag[bag.requestId] = bag;
+          ee.emit('messageReceived', { type: 'bag', key: bag.requestId });
           // log(bag.features[0]);
         }
         break;
@@ -100,14 +105,14 @@ const setupProducer = () => {
   return { sender, producer };
 };
 
-const setupPopulator = (sender: (msg: string) => void) => {
-  ee.on('messageReceived', (msg: { type: string; key: string }) => {
+const setupWorkforce = (sender: (msg: string) => void) => {
+  ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
-    if (!store.cbs.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
+    if (!store.pop.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
-    const popSvc = new PopulationService(store.cbs[key], store.bag[key]);
-    popSvc.getPopulationAsync()
+    const wfsSvc = new WorkforceService(store.bag[key], store.pop[key]);
+    wfsSvc.getWorkforceAsync()
       .then(households => {
         sender(JSON.stringify(households));
         log('Complete');
@@ -117,7 +122,7 @@ const setupPopulator = (sender: (msg: string) => void) => {
 
 const { sender, producer } = setupProducer();
 const consumer = setupConsumer();
-setupPopulator(sender);
+setupWorkforce(sender);
 
 process.on('SIGINT', function () {
   log('Caught interrupt signal');

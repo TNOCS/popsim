@@ -6,6 +6,7 @@
   "scripts": {
     "up": "docker-compose up -d",
     "stop": "docker-compose stop",
+    "ps": "docker-compose ps",
     "clean": "docker-compose rm -f -v"
   },
   "keywords": [],

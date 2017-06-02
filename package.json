@@ -7,6 +7,7 @@
     "start": "lerna run start --parallel",
     "stop": "lerna run stop",
     "up": "lerna run up",
+    "ps": "lerna run ps",
     "clean": "lerna run stop && lerna run clean"
   },
   "devDependencies": {

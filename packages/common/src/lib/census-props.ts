@@ -2,6 +2,7 @@ import { ICensusProps } from './census-props';
 import { FeatureCollection, Feature, Polygon, GeometryObject } from 'geojson';
 
 export interface ICensusFeatureCollection extends FeatureCollection<GeometryObject> {
+  requestId: number;
   type: 'FeatureCollection';
   features: Array<ICensusFeature>;
 }

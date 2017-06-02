@@ -19,7 +19,7 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
-    "@turf/area": "^4.3.0",
+    "@popsim/common": "^1.0.0",
     "kafka-node": "^1.6.2",
     "pg": "^6.2.2"
   }

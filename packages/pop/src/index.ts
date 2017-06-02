@@ -1,4 +1,4 @@
-import { ICensusFeatureCollection, IBuildingFeatureCollection } from '@popsim/common';
+import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg } from '@popsim/common';
 import { PopulationService } from './lib/population-service';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
@@ -13,8 +13,8 @@ class PopulationEmitter extends EventEmitter { };
 const ee = new PopulationEmitter();
 
 const store: {
-  cbs: { [key: string]: ICensusFeatureCollection };
-  bag: { [key: string]: IBuildingFeatureCollection };
+  cbs: { [key: number]: ICensusFeatureCollection };
+  bag: { [key: number]: IBuildingFeatureCollection };
 } = {
     cbs: {},
     bag: {}
@@ -44,7 +44,7 @@ const setupConsumer = () => {
         log('CBS message received.');
         const cbs = <ICensusFeatureCollection>JSON.parse(message.value);
         if (cbs.features && cbs.features.length > 0) {
-          const key = cbs.bbox ? cbs.bbox.join(', ') : 'undefined';
+          const key = cbs.requestId;
           store.cbs[key] = cbs;
           ee.emit('messageReceived', { type: 'cbs', key: key });
         }
@@ -53,7 +53,7 @@ const setupConsumer = () => {
         log('BAG message received.');
         const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
         if (bag.features && bag.features.length > 0) {
-          const key = bag.bbox ? bag.bbox.join(', ') : 'undefined';
+          const key = bag.requestId;
           store.bag[key] = bag;
           ee.emit('messageReceived', { type: 'bag', key: key });
           // log(bag.features[0]);
@@ -102,7 +102,7 @@ const setupProducer = () => {
 };
 
 const setupPopulator = (sender: (msg: string) => void) => {
-  ee.on('messageReceived', (msg: { type: string; key: string }) => {
+  ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
     if (!store.cbs.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
@@ -110,7 +110,11 @@ const setupPopulator = (sender: (msg: string) => void) => {
     const popSvc = new PopulationService(store.cbs[key], store.bag[key]);
     popSvc.getPopulationAsync()
       .then(households => {
-        sender(JSON.stringify(households));
+        sender(JSON.stringify(<IPopulationMsg>{
+          requestId: key,
+          bbox: store.cbs[key].bbox,
+          households: households
+        }));
         log('Complete');
       });
   });

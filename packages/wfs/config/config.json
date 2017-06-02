@@ -1,11 +1,11 @@
 {
   "logging": true,
   "kafka": {
-    "clientId": "popSvc",
+    "clientId": "wfsSvc",
     "host": "localhost:2181",
     "subscription": {
       "topics": [{
-        "topic": "areaChannel",
+        "topic": "popChannel",
         "partition": 0
       }, {
         "topic": "bagChannel",
