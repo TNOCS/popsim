@@ -1,4 +1,14 @@
 {
+  "name": "popsim",
+  "version": "v0.0.1",
+  "scripts": {
+    "install": "lerna bootstrap --hoist",
+    "build": "lerna run build --parallel",
+    "start": "lerna run start --parallel",
+    "stop": "lerna run stop",
+    "up": "lerna run up",
+    "clean": "lerna run stop && lerna run clean"
+  },
   "devDependencies": {
     "lerna": "^2.0.0-rc.5"
   }
