@@ -1,8 +1,6 @@
-import { IBuildingFeatureCollection } from './../../common/src/lib/building-props';
-import { ICensusFeatureCollection } from '@popsim/common';
+import { ICensusFeatureCollection, IBuildingFeatureCollection } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
-import { GeometryObject } from 'geojson';
 import { EventEmitter } from 'events';
 
 process.title = 'population_service';
