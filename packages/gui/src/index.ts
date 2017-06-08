@@ -1,4 +1,4 @@
-import { IAreaMessage } from '@popsim/common';
+import { ISimRequestMessage } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 
@@ -65,7 +65,7 @@ const { sender, producer } = setupProducer();
 const consumer = setupConsumer(sender);
 
 setTimeout(() => {
-  const newAreaEvent = <IAreaMessage>{
+  const newAreaEvent = <ISimRequestMessage>{
     id: 1,
     simulationStartTime: { hour: 6, min: 0, day: 'mo' },
     simulationEndTime: { hour: 6, min: 0, day: 'tu' },
