@@ -1,7 +1,7 @@
-import { range, random, shuffle, householdKey } from '@popsim/common';
+import { IBuildingFeatureCollection, ICensusFeatureCollection, ILocation } from '@popsim/common';
+import { range, random, shuffle } from '@popsim/common';
 import { IHousehold, HouseholdType, IBuildingProps, ICensusProps } from '@popsim/common';
-import { IPerson, Gender, PersonRole, IPopulation, IChildDistribution } from '@popsim/common';
-import { FeatureCollection, GeometryObject } from 'geojson';
+import { IPerson, Gender, PersonRole, IPopulation, IChildDistribution, LocationType, RelationType } from '@popsim/common';
 import { config } from './configuration';
 
 const log = config.logging ? console.log : () => undefined;
@@ -24,7 +24,7 @@ const log = config.logging ? console.log : () => undefined;
  * @class PopulationService
  */
 export class PopulationService {
-  constructor(private stats: FeatureCollection<GeometryObject>, private buildings: FeatureCollection<GeometryObject>) { }
+  constructor(private stats: ICensusFeatureCollection, private buildings: IBuildingFeatureCollection) { }
 
   public async getPopulationAsync() {
     return new Promise<IHousehold[]>((resolve) => {
@@ -62,6 +62,7 @@ export class PopulationService {
         households[areaToIndex(w)].push(<IHousehold>{
           bId: props.id,
           rId: i,
+          geo: props.geopunt,
           area: w,
           householdType: HouseholdType.unknown,
           persons: []
@@ -213,13 +214,15 @@ export class PopulationService {
         return <IPerson>{
           age: childAge(),
           gender: Gender.male,
-          roles: [PersonRole.child]
+          isLocal: true,
+          roles: [{ role: PersonRole.child, location: 0, fte: 1 }]
         };
       }).concat(range(1, girls).map(() => {
         return <IPerson>{
           age: childAge(),
           gender: Gender.female,
-          roles: [PersonRole.child]
+          isLocal: true,
+          roles: [{ role: PersonRole.child, location: 0, fte: 1 }]
         };
       }));
     const personsSingle: IPerson[] =
@@ -227,13 +230,15 @@ export class PopulationService {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.male,
-          roles: [PersonRole.single]
+          isLocal: true,
+          roles: [{ role: PersonRole.single, location: 0, fte: 1 }]
         };
       }).concat(range(1, femaleSingles).map(() => {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.female,
-          roles: [PersonRole.single]
+          isLocal: true,
+          roles: [{ role: PersonRole.single, location: 0, fte: 1 }]
         };
       }));
     const personsInRelationship: IPerson[] =
@@ -241,13 +246,15 @@ export class PopulationService {
         return <IPerson>{
           age: adultWithChildrenAge(),
           gender: Gender.male,
-          roles: [PersonRole.father]
+          isLocal: true,
+          roles: [{ role: PersonRole.father, location: 0, fte: 1 }]
         };
       }).concat(range(1, relationships).map(() => {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.female,
-          roles: [PersonRole.mother]
+          isLocal: true,
+          roles: [{ role: PersonRole.mother, location: 0, fte: 1 }]
         };
       }));
     const personsPairs: IPerson[] =
@@ -255,13 +262,15 @@ export class PopulationService {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.male,
-          roles: [PersonRole.father]
+          isLocal: true,
+          roles: [{ role: PersonRole.father, location: 0, fte: 1 }]
         };
       }).concat(range(1, pairs).map(() => {
         return <IPerson>{
           age: adultWithChildrenAge(),
           gender: Gender.female,
-          roles: [PersonRole.mother]
+          isLocal: true,
+          roles: [{ role: PersonRole.mother, location: 0, fte: 1 }]
         };
       }));
     const personsSingleParent: IPerson[] =
@@ -269,13 +278,15 @@ export class PopulationService {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.male,
-          roles: [PersonRole.father]
+          isLocal: true,
+          roles: [{ role: PersonRole.father, location: 0, fte: 1 }]
         };
       }).concat(range(1, femaleSingleParent).map(() => {
         return <IPerson>{
           age: adultAge(),
           gender: Gender.female,
-          roles: [PersonRole.mother]
+          isLocal: true,
+          roles: [{ role: PersonRole.mother, location: 0, fte: 1 }]
         };
       }));
     return <IPopulation>{
@@ -354,16 +365,26 @@ export class PopulationService {
         const household = hh.splice(ih, 1)[0];
         household.householdType = type;
         person = p.shift();
+        const location: ILocation = {
+          bId: household.bId,
+          rId: household.rId,
+          geo: household.geo,
+          locType: LocationType.residence,
+          relType: RelationType.live
+        };
         if (person) {
           household.persons.push(person);
-          person.householdId = householdKey(household);
+          person.locations = [location];
           if (pair) {
-            person = findSuitablePartner(person, p);
-            if (person) { household.persons.push(person); }
+            const person2 = findSuitablePartner(person, p);
+            if (person2) {
+              person2.locations = [location];
+              household.persons.push(person2);
+            }
           }
           if (children && childCountFunc) {
-            const cc = childCountFunc();
-            childCount -= addChildren(count, cc, household.persons, children);
+            children.forEach(c => c.locations = [location]);
+            childCount -= addChildren(count, childCountFunc(), household.persons, children);
           }
         }
         assignedHouseholds.push(household);
@@ -378,7 +399,7 @@ export class PopulationService {
             // randomly select a household, count its children, and add children to them if they already have 3
             index = random(0, assignedHouseholds.length - 1);
             personsInHH = assignedHouseholds[index].persons;
-            nmbrOfChildren = personsInHH.filter(pp => pp.roles.indexOf(PersonRole.child) >= 0).length;
+            nmbrOfChildren = personsInHH.filter(pp => pp.roles.filter(r => r.role === PersonRole.child).length >= 0).length;
           } while (nmbrOfChildren < 3);
           childCount -= addChildren(-1, 1, personsInHH, children);
         } while (childCount > 0 && children.length > 0);

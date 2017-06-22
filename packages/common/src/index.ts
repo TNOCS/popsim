@@ -1,3 +1,5 @@
+export * from './lib/relation';
+export * from './lib/location';
 export * from './lib/person';
 export * from './lib/census-props';
 export * from './lib/building-props';

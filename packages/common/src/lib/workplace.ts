@@ -1,9 +1,11 @@
+import { Point } from 'geojson';
 import { IPerson } from './person';
 
 export enum WorkplaceType {
   unknown,
   office,
   shop,
+  sport,
   catering, // horeca
   school,
   care,
@@ -16,4 +18,5 @@ export interface IWorkplace {
   area: number;
   workplaceType: WorkplaceType;
   persons: IPerson[];
+  geo: Point;
 }

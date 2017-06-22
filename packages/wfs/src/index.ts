@@ -1,4 +1,4 @@
-import { ISimRequestMessage, IMessage, IHousehold, IPopulationMsg, IBuildingFeatureCollection, logger } from '@popsim/common';
+import { ISimRequestMessage, IMessage, IPopulationMsg, IBuildingFeatureCollection, logger } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
@@ -7,7 +7,7 @@ import { WorkforceService } from './lib/workforce-service';
 process.title = 'workforce_service';
 
 const log = logger(config.logging);
-const logError = logger(true, 'ERROR');
+const logError = (msg: string | Object) => { if (msg) { logger(true, 'ERROR'); } };
 
 class WorkforceEmitter extends EventEmitter { };
 const ee = new WorkforceEmitter();
@@ -88,13 +88,23 @@ const setupProducer = () => {
   });
 
   const options = config.kafka.publication;
-  const sender = (msg: string) => {
+  const populationSender = (msg: string) => {
     const payloads = [{
       topic: options.population.topic,
       partition: options.population.partition,
       messages: msg
     }];
-    log(`Sending message to topic ${options.population.topic}/${options.population.partition}: ${msg}`);
+    log(`Sending message to topic ${options.population.topic}/${options.population.partition}: ${msg.substr(0, Math.min(msg.length, 2048))}`);
+    producer.send(payloads, (err, data) => logError(data));
+  };
+
+  const workforceSender = (msg: string) => {
+    const payloads = [{
+      topic: options.workforce.topic,
+      partition: options.workforce.partition,
+      messages: msg
+    }];
+    log(`Sending message to topic ${options.workforce.topic}/${options.workforce.partition}: ${msg.substr(0, Math.min(msg.length, 2048))}`);
     producer.send(payloads, (err, data) => logError(data));
   };
 
@@ -102,27 +112,30 @@ const setupProducer = () => {
     log(`Producer ready.`);
   });
 
-  return { sender, producer };
+  return { populationSender, workforceSender, producer };
 };
 
-const setupWorkforce = (sender: (msg: string) => void) => {
+const setupWorkforce = (populationSender: (msg: string) => void, workforceSender: (msg: string) => void) => {
   ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
     if (!store.pop.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
-    const wfsSvc = new WorkforceService(store.bag[key], store.pop[key]);
+    const bag = store.bag[key];
+    const pop = store.pop[key];
+    const wfsSvc = new WorkforceService(bag, pop);
     wfsSvc.getWorkforceAsync()
-      .then(households => {
-        sender(JSON.stringify(households));
+      .then(workplaces => {
+        workforceSender(JSON.stringify(workplaces));
+        populationSender(JSON.stringify(pop)); // should have been augmented with non-local persons (others)
         log('Complete');
       });
   });
 };
 
-const { sender, producer } = setupProducer();
+const { populationSender, workforceSender,  producer } = setupProducer();
 const consumer = setupConsumer();
-setupWorkforce(sender);
+setupWorkforce(populationSender, workforceSender);
 
 process.on('SIGINT', function () {
   log('Caught interrupt signal');

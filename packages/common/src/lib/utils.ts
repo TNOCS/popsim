@@ -1,4 +1,6 @@
+import { Feature, Polygon } from 'GeoJSON';
 import { IHousehold } from './household';
+
 /**
  * Generate a sequence of numbers between from and to with step size: [from, to].
  *
@@ -63,10 +65,32 @@ export const shuffle = <T>(array: T[]) => {
   return array;
 };
 
+// /**
+//  * Create a key for persons so they can reference their household.
+//  * Concatenate building ID and residence ID.
+//  *
+//  * @param {IHousehold} household
+//  */
+// export const householdKey = (household: IHousehold) => `${household.bId}-${household.rId}`;
+
 /**
- * Create a key for persons so they can reference their household.
- * Concatenate building ID and residence ID.
+ * Convert a bounding box to a GeoJSON feature.
  *
- * @param {IHousehold} household
+ * @param {number[]} bbox
+ * @returns
  */
-export const householdKey = (household: IHousehold) => `${household.bId}-${household.rId}`;
+export const bboxToFeature = (bbox: number[]) => {
+  return <Feature<Polygon>> {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [[
+        [bbox[0], bbox[1]],
+        [bbox[2], bbox[1]],
+        [bbox[2], bbox[3]],
+        [bbox[0], bbox[3]],
+        [bbox[0], bbox[1]]
+      ]] }
+    };
+};

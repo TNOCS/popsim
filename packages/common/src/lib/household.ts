@@ -1,3 +1,4 @@
+import { Point } from 'geojson';
 import { IPerson } from './person';
 
 export enum HouseholdType {
@@ -19,6 +20,7 @@ export interface IHousehold {
   bId: number;
   /** Residence ID inside building */
   rId: number;
+  geo: Point;
   area: number;
   householdType: HouseholdType;
   persons: IPerson[];

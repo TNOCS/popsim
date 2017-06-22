@@ -8,16 +8,16 @@
   dependencies:
     wgs84 "0.0.0"
 
-"@turf/area@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@turf/area/-/area-4.3.0.tgz#7f6b1bb9a45c2c553ead7c507d1ccb98c4907e4f"
+"@turf/area@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@turf/area/-/area-4.4.0.tgz#b10ab02c7bf955abb30adefef6585b4f2f4d36d6"
   dependencies:
     "@mapbox/geojson-area" "^0.2.2"
-    "@turf/meta" "^4.3.0"
+    "@turf/meta" "^4.4.0"
 
-"@turf/meta@^4.3.0":
-  version "4.3.0"
-  resolved "https://registry.yarnpkg.com/@turf/meta/-/meta-4.3.0.tgz#eb11dd2c2511524258123767fe0f5c3bd963e8d7"
+"@turf/meta@^4.4.0":
+  version "4.4.0"
+  resolved "https://registry.yarnpkg.com/@turf/meta/-/meta-4.4.0.tgz#4fa25d4cc0525bd4cdbaf4ff68a6f8ae81f1975f"
 
 "@types/geojson@^1.0.2":
   version "1.0.2"
@@ -27,9 +27,13 @@
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/@types/kafka-node/-/kafka-node-1.3.2.tgz#e1c32a8d299ee51d9c0e517ae07438150b468d1c"
 
-"@types/node@*", "@types/node@^7.0.18":
+"@types/node@*":
   version "7.0.22"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.22.tgz#4593f4d828bdd612929478ea40c67b4f403ca255"
+
+"@types/node@^7.0.23":
+  version "7.0.27"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-7.0.27.tgz#ba5e1a87aca2b4f5817289615ffe56472927687e"
 
 "@types/pg-types@*":
   version "1.11.1"
@@ -845,7 +849,7 @@ tweetnacl@^0.14.3, tweetnacl@~0.14.0:
   version "0.14.5"
   resolved "https://registry.yarnpkg.com/tweetnacl/-/tweetnacl-0.14.5.tgz#5ae68177f192d4456269d108afa93ff8743f4f64"
 
-typescript@^2.3.2:
+typescript@^2.3.4:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.4.tgz#3d38321828231e434f287514959c37a82b629f42"
 

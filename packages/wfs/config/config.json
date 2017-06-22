@@ -19,59 +19,48 @@
       "workforce": {
         "topic": "wfsChannel",
         "partition": 0
+      },
+      "population": {
+        "topic": "pop2Channel",
+        "partition": 0
       }
     }
   },
   "statistics": {
-    "male": {
-      "allAges": 8475102,
-      "under20": 1954878
-    },
-    "female": {
-      "allAges": 8606405,
-      "under20": 1862295
-    },
-    "singleParentPerc": 26.62,
-    "pairs": {
-      "oneChild": 42.65,
-      "twoChildren": 41.68,
-      "threeOrMoreChildren": 15.67,
-      "threeOrMoreFactor": 3.2
-    },
-    "singleParent": {
-      "oneChild": 61.98,
-      "twoChildren": 29.09,
-      "threeOrMoreChildren": 8.93,
-      "threeOrMoreFactor": 3.2,
-      "aloneWithMother": {
-        "boy": 189688,
-        "girl": 184468
-      },
-      "aloneWithFather": {
-        "boy": 22749,
-        "girl": 18791
+    "travellingDistance": {
+      "avgKm": {
+        "men": 30,
+        "women": 16
       }
+    },
+    "maleFemaleWorkerPerc": 60,
+    "visitingDistance": {
+      "avgKm": {
+        "men": 8,
+        "women": 2
+      }
+    },
+    "maleFemaleVisitorPerc": 20,
+    "offices": {
+      "emptyProbability": 0.17,
+      "workAreaProbability": 0.55,
+      "workspaceM2": 12.5
+    },
+    "reuseProbability": 0.1,
+    "shops": {
+      "ftePerM2": 0.0155046928,
+      "customersPerM2": 0.155046928
+    },
+    "sports": {
+      "ftePerM2": 0.005,
+      "sportersPerM2": 0.1,
+      "maleFemaleRatio": 0.7
+    },
+    "schools": {
+      "maxPrimarySchoolSize": 500,
+      "ftePerM2": 0.01,
+      "studentsPerM2": 0.2
     }
   },
-  "guesstimates": {
-    "householdDistribution": [{
-      "maxAreaM2": 85,
-      "singles": 87,
-      "singleParents": 35,
-      "relationships": 10,
-      "pairs": 5
-    }, {
-      "maxAreaM2": 130,
-      "singles": 10,
-      "singleParents": 60,
-      "relationships": 60,
-      "pairs": 55
-    }, {
-      "maxAreaM2": -1,
-      "singles": 3,
-      "singleParents": 5,
-      "relationships": 30,
-      "pairs": 40
-    }]
-  }
+  "outerBboxDelta": [0.5, 1]
 }

@@ -49,5 +49,46 @@ education & spare time;     7865;    1254000;    20839;
 personal care;              7237;    933000;      32351;
 home decorating;            9750;    6403000;    36322;
 
+## Distance between work and house
+According to [CBS](http://statline.cbs.nl/Statweb/publication/?DM=SLNL&PA=82918ned&D1=0&D2=0&D3=a&D4=0-1,4&D5=0&D6=a&VW=T), in 2016, of the 8403000 people working, 1318+393+752+172=2635000 people work from or nearby home. 2635 / 8403 = 31.36% of the working population!
 
+The average travelling distance is 30km for men, and 16km for women according to [CBS](https://www.cbs.nl/nl-nl/nieuws/2016/25/hoogopgeleide-man-maakt-de-meeste-woon-werkkilometers). See also the [transport and mobility report 2016](https://www.cbs.nl/nl-nl/publicatie/2016/25/transport-en-mobiliteit-2016).
+Mostly by car, but distances <5km by bike (about 1000km per year per person).
 
+The average [travel distance](http://statline.cbs.nl/Statweb/publication/?DM=SLNL&PA=81251ned&D1=a&D2=0&D3=0&D4=l&HDR=G2,T&STB=G1,G3&VW=T) was 14.6km.
+
+http://statline.cbs.nl/Statweb/publication/?DM=SLNL&PA=81431NED&D1=0&D2=a&D3=0&D4=l&VW=T
+
+	OnderwerpenPas de indeling van de tabel aan. Verplaats variabele naar rijen.	Werkgelegenheid
+Banen
+Kenmerken baan / werknemer / bedrijf	x 1 000
+Totaal	A-U Alle economische activiteiten	2015	7 783
+Geslacht: Mannen	A-U Alle economische activiteiten	2015	4 092
+Geslacht: Vrouwen	A-U Alle economische activiteiten	2015	3 691
+Leeftijd: 0 tot 15 jaar	A-U Alle economische activiteiten	2015	9
+Leeftijd: 15 tot 20 jaar	A-U Alle economische activiteiten	2015	534
+Leeftijd: 20 tot 25 jaar	A-U Alle economische activiteiten	2015	804
+Leeftijd: 25 tot 30 jaar	A-U Alle economische activiteiten	2015	850
+Leeftijd: 30 tot 35 jaar	A-U Alle economische activiteiten	2015	791
+Leeftijd: 35 tot 40 jaar	A-U Alle economische activiteiten	2015	759
+Leeftijd: 40 tot 45 jaar	A-U Alle economische activiteiten	2015	847
+Leeftijd: 45 tot 50 jaar	A-U Alle economische activiteiten	2015	940
+Leeftijd: 50 tot 55 jaar	A-U Alle economische activiteiten	2015	901
+Leeftijd: 55 tot 60 jaar	A-U Alle economische activiteiten	2015	750
+Leeftijd: 60 tot 65 jaar	A-U Alle economische activiteiten	2015	480
+Leeftijd: 65 tot 75 jaar	A-U Alle economische activiteiten	2015	106
+Leeftijd: 75 jaar of ouder	A-U Alle economische activiteiten	2015	10
+Dienstverband: voltijd	A-U Alle economische activiteiten	2015	3 571
+Dienstverband: deeltijd	A-U Alle economische activiteiten	2015	4 211
+Arbeidsduur: minder dan 12 uur per week	A-U Alle economische activiteiten	2015	1 213
+Arbeidsduur: 12 tot 20 uur per week	A-U Alle economische activiteiten	2015	781
+Arbeidsduur: 20 tot 25 uur per week	A-U Alle economische activiteiten	2015	784
+Arbeidsduur: 25 tot 30 uur per week	A-U Alle economische activiteiten	2015	570
+Arbeidsduur: 30 tot 35 uur per week	A-U Alle economische activiteiten	2015	831
+Arbeidsduur: 35 uur of meer per week	A-U Alle economische activiteiten	2015	3 603
+Bedrijfsgrootte:minder dan 10 werknemers	A-U Alle economische activiteiten	2015	1 173
+Bedrijfsgrootte: 10 tot 100 werknemers	A-U Alle economische activiteiten	2015	1 831
+Bedrijfsgrootte: 100 werknemers of meer	A-U Alle economische activiteiten	2015	4 779
+Cao-sector: particuliere bedrijven	A-U Alle economische activiteiten	2015	5 439
+Cao-sector: gesubsidieerde instellingen	A-U Alle economische activiteiten	2015	1 326
+Cao-sector: overheid	A-U Alle economische activiteiten	2015	1 017

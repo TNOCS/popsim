@@ -77,9 +77,9 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<ICensusFeatureCollection
   const consumer = new Consumer(client, [], options.options);
 
   // Refresh the metadata and create the topics at the same time.
-  client.refreshMetadata(topics, (err, resp) => {
+  client.refreshMetadata(topics, (err: Error, resp) => {
     if (err) { logError(err); }
-    consumer.addTopics(topics, (error, added) => {
+    consumer.addTopics(topics, (error: Error, added) => {
       if (error) { logError(error); }
       log(`Consumer ready, listening on ${topics.join(',')}.`);
     });
