@@ -9,21 +9,21 @@ export interface ISimRequestMessage {
    * Request ID
    *
    * @type {number}
-   * @memberof IAreaMessage
+   * @memberof 'ISimRequestMessage'
    */
   id: number;
   /**
    * Simultation start time
    *
    * @type {ISimTime}
-   * @memberof IAreaMessage
+   * @memberof 'ISimRequestMessage'
    */
   simulationStartTime: ISimTime;
   /**
    * Simulation end time
    *
    * @type {ISimTime}
-   * @memberof IAreaMessage
+   * @memberof 'ISimRequestMessage'
    */
   simulationEndTime: ISimTime;
   /**
@@ -31,7 +31,7 @@ export interface ISimRequestMessage {
    * [longitude, latitude, longitude, latitude]
    *
    * @type {number[]}
-   * @memberof IAreaMessage
+   * @memberof 'ISimRequestMessage'
    */
   bbox: number[];
 }
