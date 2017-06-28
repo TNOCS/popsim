@@ -1,3 +1,4 @@
+import { IActivity } from './activity';
 import { ILocation } from './location';
 
 export enum Gender {
@@ -36,6 +37,8 @@ export interface IPerson {
   roles: IRoleAtLocation[];
   /** A list of locations with specific relevance to the person */
   locations: ILocation[];
+  /** A list of planned activies for the day */
+  agenda?: IActivity[];
   /**
    * Stack of behaviours, top one is currently active. E.g. standing still, walking, following someone else, etc.
    * Models are pushed from two sources: an activity in the agenda, or an event that needs an agent.

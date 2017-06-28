@@ -87,7 +87,7 @@ export class PopulationService {
     const sp = stats.singleParent;
     const p = stats.pairs;
     const props = <ICensusProps>this.stats.features[0].properties;
-    log(JSON.stringify(props, null, 2));
+    log(JSON.stringify(props, null, 2).substr(0, 1024));
 
     const spMother = sp.aloneWithMother.boy + sp.aloneWithMother.girl;
     const spFather = sp.aloneWithFather.boy + sp.aloneWithFather.girl;

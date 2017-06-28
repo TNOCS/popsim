@@ -1,11 +1,9 @@
-import { ISimRequestMessage, IMessage, IBuildingFeatureCollection } from '@popsim/common';
-import { Client, Consumer, Producer } from 'kafka-node';
-import { FeatureCollection, GeometryObject } from 'GeoJSON';
+import { ISimRequestMessage, IMessage, IBuildingFeatureCollection, logger, logError } from '@popsim/common';
+import { Client, Consumer, Producer, ProduceRequest } from 'kafka-node';
 import { config } from './lib/configuration';
 import * as pg2bag from './lib/pg2bag';
 
-const log = config.logging ? console.log : () => { return; };
-const logError = console.error;
+const log = logger(config.logging);
 
 const conOpt = config.kafka;
 
@@ -28,7 +26,7 @@ const setupBagSvc = () => {
       ${x1} ${y2},
       ${x1} ${y1}
     ))`;
-    const geojson: FeatureCollection<GeometryObject> = await pg2bag.queryPanden(bboxWkt);
+    const geojson: IBuildingFeatureCollection = await pg2bag.queryPanden(bboxWkt);
     // log(JSON.stringify(geojson, null, 2));
     return geojson;
   };
@@ -45,14 +43,14 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<IBuildingFeatureCollecti
     if (err) { logError(err); }
     consumer.addTopics(topics, (error, added) => {
       if (error) { logError(error); }
-      log(`Consumer ready, listening on ${topics.join(',')}.`);
+      log(`Consumer ready, listening on ${topics.join(', ')}.`);
     });
   });
 
   consumer.on('message', async (message: IMessage) => {
     const topic = message.topic;
     switch (topic) {
-      case 'areaChannel':
+      case 'simChannel':
         const msg = <ISimRequestMessage> JSON.parse(message.value);
         const geojson = await svc(msg.bbox);
         geojson.bbox = msg.bbox;
@@ -60,7 +58,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<IBuildingFeatureCollecti
         send(JSON.stringify(geojson));
         break;
       default:
-        log(`Message received on unknown topic ${topic}: ${JSON.stringify(message, null, 2)}`);
+        logError(`Message received on unknown topic ${topic}: ${JSON.stringify(message, null, 2)}`);
         break;
     }
   });
@@ -84,10 +82,11 @@ const setupProducer = () => {
 
   const options = config.kafka.publication.bag;
   const send = (msg: string) => {
-    const payloads = [{
+    const payloads: ProduceRequest[] = [{
       topic: options.topic,
       partition: options.partition,
-      messages: msg
+      messages: msg,
+      attributes: 1
     }];
     producer.send(payloads, (err, data) => logError(data));
   };

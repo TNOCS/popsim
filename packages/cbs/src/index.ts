@@ -1,12 +1,11 @@
-import { IMessage, ISimRequestMessage, ICensusFeatureCollection } from '@popsim/common';
+import { IMessage, ISimRequestMessage, ICensusFeatureCollection, ICensusFeature, ICensusProps, logger, logError } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
-import { FeatureCollection, GeometryObject, Feature, Polygon } from 'GeoJSON';
+import { GeometryObject, Feature } from 'GeoJSON';
 import * as area from '@turf/area';
 import { config } from './lib/configuration';
 import * as pg2cbs from './lib/pg2cbs';
 
-const log = config.logging ? console.log : () => { return; };
-const logError = console.error;
+const log = logger(config.logging);
 
 const conOpt = config.kafka;
 
@@ -29,10 +28,10 @@ const setupCbsSvc = () => {
       ${x1} ${y2},
       ${x1} ${y1}
     ))`;
-    const geojson: FeatureCollection<GeometryObject> = await pg2cbs.queryCbs(bboxWkt);
+    const geojson: ICensusFeatureCollection = await pg2cbs.queryCbs(bboxWkt);
     if (!geojson.features) { return geojson; }
-    const props: { [key: string]: number } = {};
-    const summary = <Feature<Polygon>>{
+    const props = <ICensusProps>{};
+    const summary = <ICensusFeature>{
       type: 'Feature',
       geometry: {
         type: 'Polygon',
@@ -48,7 +47,7 @@ const setupCbsSvc = () => {
     };
     geojson.features.forEach(f => {
       if (!f.properties) { return; }
-      const buurtGeom = (<{ buurt_geom: any }>f.properties).buurt_geom;
+      const buurtGeom = f.properties.buurt_geom;
       const areaOverlap = area(f);
       const areaOriginal = area(<Feature<GeometryObject>>{
         type: 'Feature',
@@ -58,11 +57,11 @@ const setupCbsSvc = () => {
       for (let key in f.properties) {
         if (f.properties.hasOwnProperty(key) && key.indexOf('aant') >= 0) {
           if (!props.hasOwnProperty(key)) { props[key] = 0; }
-          props[key] += pOverlap * (<{ [key: string]: number }>f.properties)[key];
+          props[key] = <number>props[key] + pOverlap * <number>f.properties[key];
         }
       }
     });
-    for (let key in props) { if (props.hasOwnProperty(key)) { props[key] = Math.round(props[key]); } }
+    for (let key in props) { if (props.hasOwnProperty(key)) { props[key] = Math.round(<number>props[key]); } }
     geojson.features.splice(0, 0, summary);
     // log(JSON.stringify(geojson, null, 2));
     return geojson;
@@ -88,7 +87,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<ICensusFeatureCollection
   consumer.on('message', async (message: IMessage) => {
     const topic = message.topic;
     switch (topic) {
-      case 'areaChannel':
+      case 'simChannel':
         const msg = <ISimRequestMessage> JSON.parse(message.value);
         const geojson = await svc(msg.bbox);
         geojson.bbox = msg.bbox;
@@ -96,7 +95,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<ICensusFeatureCollection
         send(JSON.stringify(geojson));
         break;
       default:
-        log(`Message received on unknown topic ${topic}: ${JSON.stringify(message, null, 2)}`);
+        logError(`Message received on unknown topic ${topic}: ${JSON.stringify(message, null, 2)}`);
         break;
     }
   });

@@ -38,7 +38,7 @@
     },
     "publication": {
       "area": {
-        "topic": "areaChannel",
+        "topic": "simChannel",
         "partition": 0
       }
     }

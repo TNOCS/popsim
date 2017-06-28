@@ -1,24 +1,24 @@
-import { ISimRequestMessage, IMessage, IPopulationMsg, IBuildingFeatureCollection, logger, logError, IWorkforceMsg } from '@popsim/common';
-import { Client, Consumer, Producer, ProduceRequest } from 'kafka-node';
+import { ISimRequestMessage, IMessage, IPopulationMsg, IWorkforceMsg, logger, logError } from '@popsim/common';
+import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
-import { WorkforceService } from './lib/workforce-service';
+import { PdaService } from './lib/pda-service';
 
-process.title = 'workforce_service';
+process.title = 'pda_service';
 
 const log = logger(config.logging);
 
-class WorkforceEmitter extends EventEmitter { };
-const ee = new WorkforceEmitter();
+class PdaEmitter extends EventEmitter { };
+const ee = new PdaEmitter();
 
 const store: {
   pop: { [key: number]: IPopulationMsg };
-  bag: { [key: number]: IBuildingFeatureCollection };
+  wfs: { [key: number]: IWorkforceMsg };
   sim: { [key: number]: ISimRequestMessage };
-  done: number[]
+  done: number[];
 } = {
     pop: {},
-    bag: {},
+    wfs: {},
     sim: {},
     done: []
   };
@@ -28,7 +28,7 @@ const conOpt = config.kafka;
 const setupConsumer = () => {
   const options = conOpt.subscription;
   const topics = conOpt.subscription.topics.map(t => t.topic);
-  const client = new Client(conOpt.host, conOpt.clientId + '_client');
+  const client = new Client(conOpt.host, conOpt.clientId + '_client' + Math.round(Math.random() * 10000));
   const consumer = new Consumer(client, [], options.options);
 
   // Refresh the metadata and create the topics at the same time.
@@ -43,28 +43,28 @@ const setupConsumer = () => {
   consumer.on('message', (message: IMessage) => {
     const topic = message.topic;
     switch (topic) {
-      case 'popChannel':
+      case 'pop2Channel':
         log('Population message received.');
         const pop = <IPopulationMsg>JSON.parse(message.value);
         if (store.pop.hasOwnProperty(pop.requestId)) { return; }
         store.pop[pop.requestId] = pop;
-        ee.emit('messageReceived', { type: 'cbs', key: pop.requestId });
+        ee.emit('messageReceived', { type: 'pop', key: pop.requestId });
         break;
       case 'simChannel':
-        log('Sim request message received.');
+        log('Simulation request message received.');
         const sim = <ISimRequestMessage>JSON.parse(message.value);
         if (store.sim.hasOwnProperty(sim.id)) { return; }
         store.sim[sim.id] = sim;
         ee.emit('messageReceived', { type: 'sim', key: sim.id });
         break;
-      case 'bagChannel':
-        log('BAG message received.');
-        const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
-        if (bag.features && bag.features.length > 0) {
-          if (store.bag.hasOwnProperty(bag.requestId)) { return; }
-          store.bag[bag.requestId] = bag;
-          ee.emit('messageReceived', { type: 'bag', key: bag.requestId });
-          // log(bag.features[0]);
+      case 'wfsChannel':
+        log('WFS message received.');
+        const wfs = <IWorkforceMsg>JSON.parse(message.value);
+        if (wfs.workplaces && wfs.workplaces.length > 0) {
+          if (store.wfs.hasOwnProperty(wfs.requestId)) { return; }
+          store.wfs[wfs.requestId] = wfs;
+          ee.emit('messageReceived', { type: 'wfs', key: wfs.requestId });
+          // log(bag.workplaces[0]);
         }
         break;
       default:
@@ -79,7 +79,6 @@ const setupConsumer = () => {
     logError(err);
   });
 
-  log(`Consumer ready, listening on ${options.topics.map(s => s.topic).join(',')}.`);
   return consumer;
 };
 
@@ -93,27 +92,25 @@ const setupProducer = () => {
 
   const options = config.kafka.publication;
   const populationSender = (msg: string) => {
-    const payloads: ProduceRequest[] = [{
+    const payloads = [{
       topic: options.population.topic,
       partition: options.population.partition,
-      messages: msg,
-      attributes: 1
+      messages: msg
     }];
     log(`Sending message to topic ${options.population.topic}/${options.population.partition}:
-    ${msg.substr(0, 1024)}`);
-    producer.send(payloads, (err, data) => { if (err) { logError('>> Population sender: ' + err.message); }} );
+    ${msg.substr(0, Math.min(msg.length, 1024))}`);
+    producer.send(payloads, (err, data) => logError(data));
   };
 
   const workforceSender = (msg: string) => {
-    const payloads: ProduceRequest[] = [{
+    const payloads = [{
       topic: options.workforce.topic,
       partition: options.workforce.partition,
-      messages: msg,
-      attributes: 1
+      messages: msg
     }];
     log(`Sending message to topic ${options.workforce.topic}/${options.workforce.partition}:
-    ${msg.substr(0, 1024)}`);
-    producer.send(payloads, (err, data) => { if (err) { logError('>> Workforce sender: ' + err.message); }} );
+    ${msg.substr(0, Math.min(msg.length, 1024))}`);
+    producer.send(payloads, (err, data) => logError(data));
   };
 
   producer.on('ready', () => {
@@ -123,32 +120,29 @@ const setupProducer = () => {
   return { populationSender, workforceSender, producer };
 };
 
-const setupWorkforce = (populationSender: (msg: string) => void, workforceSender: (msg: string) => void) => {
+const setupAgenda = (populationSender: (msg: string) => void, workforceSender: (msg: string) => void) => {
   ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
-    if (store.done.indexOf(key) >= 0 || !store.pop.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
+    if (store.done.indexOf(key) >= 0 || !store.pop.hasOwnProperty(key) || !store.wfs.hasOwnProperty(key) || !store.sim.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
     store.done.push(key);
-    const bag = store.bag[key];
+    const wfs = store.wfs[key];
     const pop = store.pop[key];
-    const wfsSvc = new WorkforceService(bag, pop);
-    wfsSvc.getWorkforceAsync()
+    const sim = store.sim[key];
+    const pdaSvc = new PdaService(sim, wfs.workplaces, pop);
+    pdaSvc.createAgendasAsync()
       .then(workplaces => {
-        workforceSender(JSON.stringify(<IWorkforceMsg>{
-          requestId: bag.requestId,
-          bbox: bag.bbox,
-          workplaces: workplaces
-        }));
+        workforceSender(JSON.stringify(workplaces));
         populationSender(JSON.stringify(pop)); // should have been augmented with non-local persons (others)
         log('Complete');
       });
   });
 };
 
-const { populationSender, workforceSender, producer } = setupProducer();
+const { populationSender, workforceSender,  producer } = setupProducer();
 const consumer = setupConsumer();
-setupWorkforce(populationSender, workforceSender);
+setupAgenda(populationSender, workforceSender);
 
 process.on('SIGINT', function () {
   log('Caught interrupt signal');

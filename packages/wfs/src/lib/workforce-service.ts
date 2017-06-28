@@ -1,7 +1,7 @@
 import { Point } from 'geojson';
 import * as area from '@turf/area';
 import * as distance from '@turf/distance';
-import { IBuildingFeatureCollection, IBuildingProps, bboxToFeature, range, random, WorkplaceType, ILocation, IWorkplace, IPopulationMsg, IPerson, Gender, PersonRole, LocationType, RelationType, IRoleAtLocation } from '@popsim/common';
+import { IBuildingFeatureCollection, IBuildingProps, bboxToFeature, range, random, WorkplaceType, ILocation, IWorkplace, IPopulationMsg, IPerson, Gender, PersonRole, LocationType, RelationType, IRoleAtLocation, isUnemployed } from '@popsim/common';
 import { config } from './configuration';
 
 export class WorkforceService {
@@ -59,13 +59,18 @@ export class WorkforceService {
     const probWomenVisitingLocally = this.probabilityOfLocalPersons(totalArea, config.statistics.visitingDistance.avgKm.women);
     const probMaleFemaleVisitor = config.statistics.maleFemaleVisitorPerc / 100;
 
+    /**
+     * Find a local person. Default behaviour is to look for an unemployed person of the desired gender.
+     * @param isMale
+     * @param personFilter
+     */
     const findLocalPerson = (isMale: boolean, personFilter?: (p: IPerson) => boolean) => {
       const gender = isMale ? Gender.male : Gender.female;
       let tries = 10;
       do {
         tries--;
         const hh = this.pop.households[random(0, this.pop.households.length - 1)];
-        const persons = hh.persons.filter(personFilter || (p => p.gender === gender && p.age > 17));
+        const persons = hh.persons.filter(personFilter || (p => p.gender === gender && p.age > 17 && p.age < 68 && isUnemployed(p)));
         if (persons.length > 0) {
           return persons[random(0, persons.length - 1)];
         }
@@ -170,24 +175,13 @@ export class WorkforceService {
       });
     };
 
-    // const primarySchoolFilter = (isMale: boolean) => (p: IPerson) => p.gender === (isMale ? Gender.male : Gender.female) && p.age >= 5 && p.age <= 12;
-    // const secondarySchoolFilter = (isMale: boolean) => (p: IPerson) => p.gender === (isMale ? Gender.male : Gender.female) && p.age >= 12 && p.age <= 18;
-    // const createStudents = (buildingId: number, area: number, point: Point, count: number) => {
-    //   const isPrimarySchool = count < config.statistics.schools.maxPrimarySchoolSize;
-    //   const personFilter = isPrimarySchool ? primarySchoolFilter : secondarySchoolFilter;
-    //   const location = <ILocation>{
-    //     bId: buildingId,
-    //     geo: point,
-    //     locType: isPrimarySchool ? LocationType.primarySchool : LocationType.secondarySchool,
-    //     relType: RelationType.learn
-    //   };
-    //   range(1, count).forEach(r => {
-    //     const isMaleStudent = Math.random() < 0.49;
-    //     const person = findLocalPerson(isMaleStudent, personFilter(isMaleStudent));
-    //     person.locations.push(location);
-    //     person.roles.push({ role: PersonRole.student, location: person.locations.length - 1, fte: 0 });
-    //   });
-    // };
+    /**
+     * Selection filter to select eligable perons to become sporter, i.e. there are age constraints,
+     * and constraints on the number of sports activities.
+     *
+     * @param isMale
+     */
+    const sportsPersonFilter = (isMale: boolean) => (p: IPerson) => p.gender === (isMale ? Gender.male : Gender.female) && p.age >= 7 && p.age <= 65 && p.roles.filter(person => person.role === PersonRole.sporter).length < 4;
 
     const createSporters = (buildingId: number, area: number, point: Point, count: number) => {
       const location = <ILocation>{
@@ -196,10 +190,9 @@ export class WorkforceService {
         locType: LocationType.sport,
         relType: RelationType.relax
       };
-      const personFilter = (isMale: boolean) => (p: IPerson) => p.gender === (isMale ? Gender.male : Gender.female) && p.age >= 7 && p.age <= 65;
       range(1, count).forEach(r => {
         const isMale = Math.random() < config.statistics.sports.maleFemaleRatio;
-        const person = findLocalPerson(isMale, personFilter(isMale));
+        const person = findLocalPerson(isMale, sportsPersonFilter(isMale));
         person.locations.push(location);
         person.roles.push({ role: PersonRole.sporter, location: person.locations.length - 1, fte: 0 });
       });

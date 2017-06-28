@@ -5,7 +5,7 @@
     "host": "localhost:2181",
     "subscription": {
       "topics": [{
-        "topic": "areaChannel",
+        "topic": "simChannel",
         "partition": 0
       }],
       "options": {

@@ -10,6 +10,9 @@
       }, {
         "topic": "bagChannel",
         "partition": 0
+      }, {
+        "topic": "simChannel",
+        "partition": 0
       }],
       "options": {
         "autoCommit": false

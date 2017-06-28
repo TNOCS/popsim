@@ -1,4 +1,4 @@
-import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg } from '@popsim/common';
+import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg, logger, logError } from '@popsim/common';
 import { PopulationService } from './lib/population-service';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
@@ -6,8 +6,7 @@ import { EventEmitter } from 'events';
 
 process.title = 'population_service';
 
-const log = config.logging ? console.log : () => undefined;
-const logError = console.error;
+const log = logger(config.logging);
 
 class PopulationEmitter extends EventEmitter { };
 const ee = new PopulationEmitter();
@@ -15,9 +14,11 @@ const ee = new PopulationEmitter();
 const store: {
   cbs: { [key: number]: ICensusFeatureCollection };
   bag: { [key: number]: IBuildingFeatureCollection };
+  done: number[];
 } = {
     cbs: {},
-    bag: {}
+    bag: {},
+    done: []
   };
 
 const conOpt = config.kafka;
@@ -33,7 +34,7 @@ const setupConsumer = () => {
     if (err) { logError(err); }
     consumer.addTopics(topics, (error, added) => {
       if (error) { logError(error); }
-      log(`Consumer ready, listening on ${topics.join(',')}.`);
+      log(`Consumer ready, listening on ${topics.join(', ')}.`);
     });
   });
 
@@ -45,6 +46,7 @@ const setupConsumer = () => {
         const cbs = <ICensusFeatureCollection>JSON.parse(message.value);
         if (cbs.features && cbs.features.length > 0) {
           const key = cbs.requestId;
+          if (store.cbs.hasOwnProperty(key)) { return; }
           store.cbs[key] = cbs;
           ee.emit('messageReceived', { type: 'cbs', key: key });
         }
@@ -54,6 +56,7 @@ const setupConsumer = () => {
         const bag = <IBuildingFeatureCollection>JSON.parse(message.value);
         if (bag.features && bag.features.length > 0) {
           const key = bag.requestId;
+          if (store.bag.hasOwnProperty(key)) { return; }
           store.bag[key] = bag;
           ee.emit('messageReceived', { type: 'bag', key: key });
           // log(bag.features[0]);
@@ -71,7 +74,6 @@ const setupConsumer = () => {
     logError(err);
   });
 
-  log(`Consumer ready, listening on ${options.topics.map(s => s.topic).join(',')}.`);
   return consumer;
 };
 
@@ -90,7 +92,8 @@ const setupProducer = () => {
       partition: options.population.partition,
       messages: msg
     }];
-    log(`Sending message to topic ${options.population.topic}/${options.population.partition}: ${msg}`);
+    log(`Sending message to topic ${options.population.topic}/${options.population.partition}:
+    ${JSON.stringify(msg, null, 2).substr(0, 1024)}`);
     producer.send(payloads, (err, data) => logError(data));
   };
 
@@ -105,8 +108,9 @@ const setupPopulator = (sender: (msg: string) => void) => {
   ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
-    if (!store.cbs.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
+    if (store.done.indexOf(key) >= 0 || !store.cbs.hasOwnProperty(key) || !store.bag.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
+    store.done.push(key);
     const popSvc = new PopulationService(store.cbs[key], store.bag[key]);
     popSvc.getPopulationAsync()
       .then(households => {

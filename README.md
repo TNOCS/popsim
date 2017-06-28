@@ -47,4 +47,7 @@ cd ..
 
 Alternatively, from the root folder, you can simply run `yarn run stop` to stop it, or `yarn run clean` to remove the created volumes too (effectively removing any history).
 
+## Building from scratch
+
+Run `yarn run build` to build all packages (via Lerna) in parallel.
 

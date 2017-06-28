@@ -1,7 +1,7 @@
 import * as pg from 'pg';
 import { config } from './configuration';
 
-const log = config.logging ? console.log : () => { return; };
+// const log = config.logging ? console.log : () => { return; };
 
 // This initializes a connection pool:
 // It will keep idle connections open for idleTimeoutMillis msecs
@@ -20,7 +20,7 @@ pool.on('error', (err: Error, client: any) => {
 
 // export the query method for passing queries to the pool
 export const query = (queryText: string, values: Array<any>) => {
-  log('query:', queryText, values);
+  // log('query:', queryText, values);
   return pool.query(queryText, values);
 };
 

@@ -1,9 +1,8 @@
-import { ISimRequestMessage, logger } from '@popsim/common';
+import { ISimRequestMessage, logger, logError } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 
 const log = logger(config.logging);
-const logError = logger(config.logging, 'ERROR');
 
 const conOpt = config.kafka;
 
@@ -23,7 +22,7 @@ const setupConsumer = (sender: (msg: string) => void) => {
   });
 
   consumer.on('message', (message: string) => {
-    log(message);
+    log(JSON.stringify(message, null, 2).substr(0, 1024));
     // sender(message);
   });
 
@@ -31,7 +30,7 @@ const setupConsumer = (sender: (msg: string) => void) => {
     logError(err);
   });
 
-  log(`Consumer ready, listening on ${options.topics.map(s => s.topic).join(',')}.`);
+  log(`Consumer ready, listening on ${options.topics.map(s => s.topic).join(', ')}.`);
   return consumer;
 };
 
@@ -50,7 +49,8 @@ const setupProducer = () => {
       partition: options.area.partition,
       messages: msg
     }];
-    log(`Sending message to topic ${options.area.topic}/${options.area.partition}: ${msg}`);
+    log(`Sending message to topic ${options.area.topic}/${options.area.partition}:
+    ${JSON.stringify(msg, null, 2).substr(0, 1024)}`);
     producer.send(payloads, (err, data) => logError(data));
   };
 
@@ -67,8 +67,8 @@ const consumer = setupConsumer(sender);
 setTimeout(() => {
   const newAreaEvent = <ISimRequestMessage>{
     id: 1,
-    simulationStartTime: { hour: 6, min: 0, day: 'mo' },
-    simulationEndTime: { hour: 6, min: 0, day: 'tu' },
+    simulationStartTime: new Date(2017, 1, 28),
+    simulationEndTime: new Date(2017, 2, 1),
     bbox: [5.474495887756348, 51.44190471270124, 5.483808517456055, 51.43532386882376]
   };
   sender(JSON.stringify(newAreaEvent));

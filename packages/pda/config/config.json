@@ -1,0 +1,123 @@
+{
+  "logging": true,
+  "kafka": {
+    "clientId": "pdaSvc",
+    "host": "localhost:2181",
+    "subscription": {
+      "topics": [{
+        "topic": "pop2Channel",
+        "partition": 0
+      }, {
+        "topic": "wfsChannel",
+        "partition": 0
+      }, {
+        "topic": "simChannel",
+        "partition": 0
+      }],
+      "options": {
+        "autoCommit": false
+      }
+    },
+    "publication": {
+      "workforce": {
+        "topic": "wfs2Channel",
+        "partition": 0
+      },
+      "population": {
+        "topic": "pop3Channel",
+        "partition": 0
+      }
+    }
+  },
+  "statistics": {
+    "primarySchools": {
+      "schedule": {
+        "Mon": {
+          "starts": "08:30",
+          "ends": "14:45",
+          "breakFrom": "12:00",
+          "breakTill": "12:30"
+        },
+        "Tue": {
+          "starts": "08:30",
+          "ends": "14:45",
+          "breakFrom": "12:00",
+          "breakTill": "12:30"
+        },
+        "Wed": {
+          "starts": "08:30",
+          "ends": "12:00"
+        },
+        "Thu": {
+          "starts": "08:30",
+          "ends": "14:45",
+          "breakFrom": "12:00",
+          "breakTill": "12:30"
+        },
+        "Fri": {
+          "starts": "08:30",
+          "ends": "14:45",
+          "breakFrom": "12:00",
+          "breakTill": "12:30"
+        }
+      }
+    },
+    "secondarySchools": {
+      "schedule": {
+        "Mon": {
+          "starts": "08:30",
+          "ends": ["15:10", "16:00"]
+        },
+        "Tue": {
+          "starts": "08:30",
+          "ends": ["15:10", "16:00"]
+        },
+        "Wed": {
+          "starts": "08:30",
+          "ends": "13:00"
+        },
+        "Thu": {
+          "starts": "08:30",
+          "ends": ["15:10", "16:00"]
+        },
+        "Fri": {
+          "starts": "08:30",
+          "ends": ["15:10", "16:00"]
+        }
+      }
+    },
+    "accompanyChild": {
+      "toSchool": {
+        "policy": "first",
+        "rules": [{
+          "action": "bringToSchool",
+          "conditions": [{
+            "property": "age",
+            "operator": "<",
+            "operand": 10
+          }]
+        }, {
+          "action": "bringToSchool",
+          "combinator": "AND",
+          "conditions": [{
+            "property": "age",
+            "operator": "<",
+            "operand": 12
+          }, {
+            "property": "distance",
+            "operator": ">",
+            "operand": 1000
+          }]
+        }, {
+          "action": "bringToSchool",
+          "conditions": [{
+            "property": "distance",
+            "operator": ">",
+            "operand": 5000
+          }]
+        }]
+      }
+    }
+  },
+  "outerBboxDelta": [0.5, 1]
+}
