@@ -37,5 +37,6 @@ export interface ICensusProps {
   aant_ant_aru: number;
   aant_surinam: number;
   aant_over_nw: number;
-  buurt_ge: number;
+  buurt_geom: GeometryObject;
+  [key: string]: number | GeometryObject | undefined;
 }
