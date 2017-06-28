@@ -8,6 +8,7 @@
     "stop": "lerna run stop",
     "up": "lerna run up",
     "ps": "lerna run ps",
+    "restart": "lerna run stop && lerna run clean && lerna run up",
     "clean": "lerna run stop && lerna run clean"
   },
   "devDependencies": {
