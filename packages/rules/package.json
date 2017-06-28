@@ -1,0 +1,20 @@
+{
+  "name": "@popsim/rules",
+  "version": "0.0.1",
+  "description": "Simple rule engine to add behaviour to the agents",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^7.0.27",
+    "typescript": "^2.3.4"
+  },
+  "dependencies": {
+  }
+}
