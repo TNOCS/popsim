@@ -1,3 +1,4 @@
+import { IPerson, PersonRole } from './person';
 import { Feature, Polygon } from 'GeoJSON';
 import { IHousehold } from './household';
 
@@ -80,7 +81,7 @@ export const shuffle = <T>(array: T[]) => {
  * @returns
  */
 export const bboxToFeature = (bbox: number[]) => {
-  return <Feature<Polygon>> {
+  return <Feature<Polygon>>{
     type: 'Feature',
     properties: {},
     geometry: {
@@ -91,6 +92,31 @@ export const bboxToFeature = (bbox: number[]) => {
         [bbox[2], bbox[3]],
         [bbox[0], bbox[3]],
         [bbox[0], bbox[1]]
-      ]] }
-    };
+      ]]
+    }
+  };
 };
+
+/**
+ * Draw a random string from a list of strings.
+ * In case the input is a single string, return that.
+ *
+ * @param {(string | string[])} str
+ * @returns
+ */
+export const randomString = (str: string | string[]) => {
+  if (!str) { throw new Error('No input defined!'); }
+  let mode: string;
+  if (str instanceof Array) {
+    mode = str[random(0, str.length - 1)];
+  } else {
+    mode = str;
+  }
+  return mode;
+};
+
+export const isUnemployed = (person: IPerson) => person.roles.filter(p => p.role === PersonRole.employee).length === 0;
+
+export const childrenInHousehold = (household: IHousehold) => household.persons.filter(p => p.roles[0].role === PersonRole.child);
+
+export const householdHasChildren = (household: IHousehold) => childrenInHousehold.length > 0;
