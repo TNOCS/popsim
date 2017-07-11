@@ -15,7 +15,9 @@
         "partition": 0
       }],
       "options": {
-        "autoCommit": false
+        "autoCommit": false,
+        "fetchMaxWaitMs": 1000,
+        "fetchMaxBytes": 10000000
       }
     },
     "publication": {

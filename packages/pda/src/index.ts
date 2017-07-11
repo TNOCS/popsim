@@ -1,4 +1,4 @@
-import { ISimRequestMessage, IMessage, IPopulationMsg, IWorkforceMsg, logger, logError } from '@popsim/common';
+import { ISimRequestMessage, IMessage, IPopulationMsg, IWorkforceMsg, logger, logError, ActivityManager } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
@@ -28,14 +28,14 @@ const conOpt = config.kafka;
 const setupConsumer = () => {
   const options = conOpt.subscription;
   const topics = conOpt.subscription.topics.map(t => t.topic);
-  const client = new Client(conOpt.host, conOpt.clientId + '_client' + Math.round(Math.random() * 10000));
+  const client = new Client(conOpt.host, conOpt.clientId + '_client');
   const consumer = new Consumer(client, [], options.options);
 
   // Refresh the metadata and create the topics at the same time.
   client.refreshMetadata(topics, (err, resp) => {
     if (err) { logError(err); }
     consumer.addTopics(topics, (error, added) => {
-      if (error) { logError(error); }
+      if (error) { return logError(error); }
       log(`Consumer ready, listening on ${topics.join(', ')}.`);
     });
   });
@@ -99,7 +99,9 @@ const setupProducer = () => {
     }];
     log(`Sending message to topic ${options.population.topic}/${options.population.partition}:
     ${msg.substr(0, Math.min(msg.length, 1024))}`);
-    producer.send(payloads, (err, data) => logError(data));
+    producer.send(payloads, (err, data) => {
+      if (err) { logError('>> PDA population sender: ' + err); }
+    });
   };
 
   const workforceSender = (msg: string) => {
@@ -110,7 +112,9 @@ const setupProducer = () => {
     }];
     log(`Sending message to topic ${options.workforce.topic}/${options.workforce.partition}:
     ${msg.substr(0, Math.min(msg.length, 1024))}`);
-    producer.send(payloads, (err, data) => logError(data));
+    producer.send(payloads, (err, data) => {
+      if (err) { logError('>> PDA workforce sender: ' + err); }
+    });
   };
 
   producer.on('ready', () => {
@@ -127,13 +131,15 @@ const setupAgenda = (populationSender: (msg: string) => void, workforceSender: (
     if (store.done.indexOf(key) >= 0 || !store.pop.hasOwnProperty(key) || !store.wfs.hasOwnProperty(key) || !store.sim.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
     store.done.push(key);
-    const wfs = store.wfs[key];
+    // const wfs = store.wfs[key];
     const pop = store.pop[key];
     const sim = store.sim[key];
-    const pdaSvc = new PdaService(sim, wfs.workplaces, pop);
+    const pdaSvc = new PdaService(sim, pop);
     pdaSvc.createAgendasAsync()
       .then(workplaces => {
-        workforceSender(JSON.stringify(workplaces));
+        // workforceSender(JSON.stringify(workplaces));
+        const activityManager = ActivityManager.getInstance();
+        pop.households.forEach(h => h.persons.forEach(p => log(activityManager.printAgenda(p.agenda)) ));
         populationSender(JSON.stringify(pop)); // should have been augmented with non-local persons (others)
         log('Complete');
       });

@@ -2,14 +2,14 @@ import { Point } from 'geojson';
 import { RelationType } from './relation';
 
 export enum LocationType {
-  unknown,
-  residence,
-  primarySchool,
-  secondarySchool,
-  workplace,
-  leisure,
-  sport,
-  shop
+  unknown = 0,
+  residence = 1,
+  primarySchool = 2,
+  secondarySchool = 3,
+  workplace = 4,
+  leisure = 5,
+  sport = 6,
+  shop = 7
 }
 
 export interface ILocation {

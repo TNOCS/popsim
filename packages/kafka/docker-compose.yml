@@ -26,8 +26,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
       KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker:9092'
       KAFKA_DEFAULT_REPLICATION_FACTOR: 1
-      KAFKA_MESSAGE_MAX_BYTES: 3000000
-      KAFKA_REPLICA_FETCH_MAX_BYTES: 3000000
+      KAFKA_MESSAGE_MAX_BYTES: 10000000
+      KAFKA_REPLICA_FETCH_MAX_BYTES: 10000000
 
   schema_registry:
     image: confluentinc/cp-schema-registry
@@ -58,3 +58,15 @@ services:
       KAFKA_REST_LISTENERS: http://kafka-rest:8082
       KAFKA_REST_SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_REST_HOST_NAME: kafka-rest
+
+  # kafka-manager:
+  #   image: sheepkiller/kafka-manager
+  #   depends_on:
+  #   - zookeeper
+  #   ports:
+  #   - '9000:9000'
+  #   links:
+  #   - zookeeper
+  #   environment:
+  #   - ZK_HOSTS=zookeeper:2181
+  #   - APPLICATION_SECRET=letmein

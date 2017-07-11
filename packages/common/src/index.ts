@@ -1,4 +1,5 @@
 export * from './lib/activity';
+export * from './lib/activity-manager';
 export * from './lib/building-props';
 export * from './lib/census-props';
 export * from './lib/household';

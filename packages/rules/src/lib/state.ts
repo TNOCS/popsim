@@ -5,5 +5,5 @@
  * @interface IState
  */
 export interface IState {
-  [key: string]: number | string | boolean | Object | Object[];
+  [key: string]: any;
 };

@@ -7,19 +7,19 @@ export interface ISimRequestMessage {
    */
   id: number;
   /**
-   * Simultation start time
+   * Simultation start time in UTC
    *
    * @type {ISimTime}
    * @memberof 'ISimRequestMessage'
    */
-  simulationStartTime: Date;
+  simulationStartTime: string;
   /**
-   * Simulation end time
+   * Simulation end time in UTC
    *
    * @type {ISimTime}
    * @memberof 'ISimRequestMessage'
    */
-  simulationEndTime: Date;
+  simulationEndTime: string;
   /**
    * Bounding box in WGS84 (top-left, bottom-right):
    * [longitude, latitude, longitude, latitude]

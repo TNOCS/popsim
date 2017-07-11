@@ -7,7 +7,7 @@ import { IState } from './state';
  * @interface IActionOptions
  */
 export interface IActionOptions {
-  [key: string]: string | number | boolean | IActionOptions;
+  [key: string]: string | string[] | number | number[] | boolean | IActionOptions;
 }
 
 /**

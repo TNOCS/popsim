@@ -2,6 +2,7 @@ import { ISimRequestMessage, logger, logError } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 
+process.title = 'gui_service';
 const log = logger(config.logging);
 
 const conOpt = config.kafka;
@@ -67,8 +68,8 @@ const consumer = setupConsumer(sender);
 setTimeout(() => {
   const newAreaEvent = <ISimRequestMessage>{
     id: 1,
-    simulationStartTime: new Date(2017, 1, 28),
-    simulationEndTime: new Date(2017, 2, 1),
+    simulationStartTime: (new Date(2017, 1, 28)).toUTCString(),
+    simulationEndTime: (new Date(2017, 2, 1)).toUTCString(),
     bbox: [5.474495887756348, 51.44190471270124, 5.483808517456055, 51.43532386882376]
   };
   sender(JSON.stringify(newAreaEvent));

@@ -23,7 +23,7 @@ export type RuleEvaluator = (state: IState) => number | string | boolean;
  * @param {{ [property: string]: RuleEvaluator }} [evaluators] Dedicated functions to resolve unknown properties of the object
  * @returns
  */
-export const RuleEngineFactory = (ruleSet: IRuleSet,
+export const RuleEngineFactory = <T extends IState, U extends IActionOptions>(ruleSet: IRuleSet,
   actions: { [name: string]: Action },
   evaluators?: { [property: string]: RuleEvaluator }) => {
 
@@ -37,7 +37,7 @@ export const RuleEngineFactory = (ruleSet: IRuleSet,
   const evalCondition = (state: IState, condition: ICondition) => {
     const prop = state.hasOwnProperty(condition.property)
       ? state[condition.property]
-    : evaluators && evaluators.hasOwnProperty(condition.property)
+      : evaluators && evaluators.hasOwnProperty(condition.property)
         ? evaluators[condition.property](state)
         : undefined;
     if (typeof prop === 'undefined') {
@@ -56,15 +56,17 @@ export const RuleEngineFactory = (ruleSet: IRuleSet,
       case '>=':
         return prop >= operand;
       case '===':
-        return prop === operand;
+        // tslint:disable-next-line:triple-equals
+        return prop == operand;
       case '!==':
-        return prop !== operand;
+        // tslint:disable-next-line:triple-equals
+        return prop != operand;
       default:
         throw new Error(`Error evaluating condition ${JSON.stringify(condition, null, 2)}: Unknown operator!`);
     }
   };
 
-  const triggerAction = (state: IState, actionName: string, options?: IActionOptions) => {
+  const triggerAction = (state: T, actionName: string, options?: U) => {
     if (!actions.hasOwnProperty(actionName)) {
       console.warn(`Warning: Cannot resolve action ${actionName}.`);
       return;
@@ -74,32 +76,51 @@ export const RuleEngineFactory = (ruleSet: IRuleSet,
   };
 
   const processRule = (state: IState, rule: IRule) => {
-    const evaluator = rule.combinator === 'OR'
+    return rule.combinator === 'OR'
       ? rule.conditions.reduce((prev, cur) => {
         return prev || evalCondition(state, cur);
       }, false)
       : rule.conditions.reduce((prev, cur) => {
         return prev && evalCondition(state, cur);
       }, true);
-    return evaluator;
   };
 
-  const processRules = (state: IState) => {
+  /**
+   * Process all the rules
+   *
+   * @param {T} state
+   * @returns how many rules were triggered.
+   */
+  const processRules = (state: T) => {
+    let rulesTriggeredCount = 0;
     ruleSet.policy === 'first'
       ? ruleSet.rules.some(r => {
         const evaluationResult = processRule(state, r);
-        if (evaluationResult === true) { triggerAction(state, r.action, r.actionOptions); }
+        if (evaluationResult === true) {
+          rulesTriggeredCount++;
+          triggerAction(state, r.action, <U>r.actionProperties);
+        }
         return evaluationResult;
       })
       : ruleSet.rules.forEach(r => {
         const evaluationResult = processRule(state, r);
-        if (evaluationResult === true) { triggerAction(state, r.action, r.actionOptions); }
+        if (evaluationResult === true) {
+          rulesTriggeredCount++;
+          triggerAction(state, r.action, <U>r.actionProperties);
+        }
       });
+    return rulesTriggeredCount;
   };
 
   return {
-    run: (state: IState) => {
-      processRules(Object.assign({}, state));
+    /**
+     * Process all the rules
+     *
+     * @param {IState} state
+     * @returns how many rules were triggered.
+     */
+    run: (state: T) => {
+      return processRules(Object.assign({}, state));
     }
   };
 };

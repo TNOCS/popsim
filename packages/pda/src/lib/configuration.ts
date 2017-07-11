@@ -33,29 +33,66 @@ export const config: {
       }
     }
   };
-  statistics: {
-    primarySchools: {
-      schedule: {
-        Mon: ITimeSchedule;
-        Tue: ITimeSchedule;
-        Wed: ITimeSchedule;
-        Thu: ITimeSchedule;
-        Fri: ITimeSchedule;
-        [key: string]: ITimeSchedule;
-      }
-    },
-    secondarySchools: {
-      schedule: {
-        Mon: ITimeSchedule;
-        Tue: ITimeSchedule;
-        Wed: ITimeSchedule;
-        Thu: ITimeSchedule;
-        Fri: ITimeSchedule;
-        [key: string]: ITimeSchedule;
-      }
+  primarySchools: {
+    schedule: {
+      Mon: ITimeSchedule;
+      Tue: ITimeSchedule;
+      Wed: ITimeSchedule;
+      Thu: ITimeSchedule;
+      Fri: ITimeSchedule;
+      [key: string]: ITimeSchedule;
     }
   };
+  secondarySchools: {
+    schedule: {
+      Mon: ITimeSchedule;
+      Tue: ITimeSchedule;
+      Wed: ITimeSchedule;
+      Thu: ITimeSchedule;
+      Fri: ITimeSchedule;
+      [key: string]: ITimeSchedule;
+    }
+  };
+  /**
+   * Specifies the rule set for the travelling speed (and mode)
+   *
+   * @type {IRuleSet}
+   */
+  transportation: IRuleSet,
+  work: {
+    /**
+     * Specifies the rule set for the time schedule
+     *
+     * @type {IRuleSet}
+     */
+    schedule: IRuleSet,
+    walkingSpeedKmh: number;
+    cyclingSpeedKmh: number;
+    drivingSpeedKmh: number;
+    maxWalkingDistance: number;
+    maxCyclingDistance: number;
+  };
   accompanyChild: {
+    /**
+     * Walking speed with which you can bring a child to school, in km/h
+     *
+     * @type {number}
+     */
+    walkingSpeedKmh: number;
+    /**
+     * Cycling speed with which you can bring a child to school, in km/h
+     *
+     * @type {number}
+     */
+    cyclingSpeedKmh: number;
+    /**
+     * Driving speed with which you can bring a child to school, in km/h
+     *
+     * @type {number}
+     */
+    drivingSpeedKmh: number;
+    maxWalkingDistance: number;
+    maxCyclingDistance: number;
     toSchool: IRuleSet
-  }
+  };
 } = <any>Object.assign(baseConfig, localConfig);

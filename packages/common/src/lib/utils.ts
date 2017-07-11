@@ -115,8 +115,42 @@ export const randomString = (str: string | string[]) => {
   return mode;
 };
 
-export const isUnemployed = (person: IPerson) => person.roles.filter(p => p.role === PersonRole.employee).length === 0;
+export const getRole = (household: IHousehold, role: PersonRole) => household.persons.filter(p => p.roles[0].role === role);
 
-export const childrenInHousehold = (household: IHousehold) => household.persons.filter(p => p.roles[0].role === PersonRole.child);
+export const isUnemployed = (person?: IPerson) => person && person.roles.filter(p => p.role === PersonRole.employee).length === 0;
 
-export const householdHasChildren = (household: IHousehold) => childrenInHousehold.length > 0;
+export const isSingle = (person?: IPerson) => person && person.roles.filter(p => p.role === PersonRole.single).length > 0;
+export const isParent = (person?: IPerson) => person && person.roles.filter(p => p.role === PersonRole.father || p.role === PersonRole.mother).length > 0;
+
+export const getChildren = (household: IHousehold) => getRole(household, PersonRole.child);
+export const getFather = (household: IHousehold) => getRole(household, PersonRole.father).shift();
+export const getMother = (household: IHousehold) => getRole(household, PersonRole.mother).shift();
+
+export const householdHasChildren = (household: IHousehold) => getChildren.length > 0;
+
+// export const hasTime = (p: IPerson, start: Date, end: Date) => {
+//   if (!p.agenda) { p.agenda = []; }
+//   if (p.agenda.length === 0) { return true; }
+//   let ok = false;
+//   p.agenda.some((a, i, items) => {
+//     ok = end <= a.start && (i === 0 || start > items[i - 1].end);
+//     return ok;
+//   });
+//   return ok;
+// };
+
+/**
+ * Create a RFC1422 v4 compliant GUID
+ *
+ * @see https://stackoverflow.com/a/2117523/319711
+ * @returns {string}
+ */
+export const makeGuid = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    // tslint:disable-next-line:no-bitwise
+    const r = Math.random() * 16 | 0;
+    // tslint:disable-next-line:no-bitwise
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  });
+};

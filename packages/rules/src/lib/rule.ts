@@ -36,7 +36,7 @@ export interface IRule {
    *
    * @type {IActionOptions}@memberof IRule
    */
-  actionOptions?: IActionOptions;
+  actionProperties?: IActionOptions;
 
   /**
    * Conditions that must be fulfilled in order to trigger the rule.

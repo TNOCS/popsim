@@ -1,5 +1,5 @@
 import { ISimRequestMessage, IMessage, IPopulationMsg, IBuildingFeatureCollection, logger, logError, IWorkforceMsg } from '@popsim/common';
-import { Client, Consumer, Producer, ProduceRequest } from 'kafka-node';
+import { Client, ProduceRequest, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { WorkforceService } from './lib/workforce-service';
@@ -79,7 +79,6 @@ const setupConsumer = () => {
     logError(err);
   });
 
-  log(`Consumer ready, listening on ${options.topics.map(s => s.topic).join(',')}.`);
   return consumer;
 };
 
@@ -101,7 +100,13 @@ const setupProducer = () => {
     }];
     log(`Sending message to topic ${options.population.topic}/${options.population.partition}:
     ${msg.substr(0, 1024)}`);
-    producer.send(payloads, (err, data) => { if (err) { logError('>> Population sender: ' + err.message); }} );
+    producer.send(payloads, (err, data) => {
+      if (err) {
+        logError(err);
+      } else {
+        log(`Result:\n${JSON.stringify(data, null, 2)}`);
+      }
+    });
   };
 
   const workforceSender = (msg: string) => {
@@ -113,7 +118,13 @@ const setupProducer = () => {
     }];
     log(`Sending message to topic ${options.workforce.topic}/${options.workforce.partition}:
     ${msg.substr(0, 1024)}`);
-    producer.send(payloads, (err, data) => { if (err) { logError('>> Workforce sender: ' + err.message); }} );
+    producer.send(payloads, (err, data) => {
+      if (err) {
+        logError(err);
+      } else {
+        log(`Result:\n${JSON.stringify(data, null, 2)}`);
+      }
+    });
   };
 
   producer.on('ready', () => {
