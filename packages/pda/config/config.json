@@ -8,9 +8,6 @@
                 "topic": "pop2Channel",
                 "partition": 0
             }, {
-                "topic": "wfsChannel",
-                "partition": 0
-            }, {
                 "topic": "simChannel",
                 "partition": 0
             }],
@@ -21,12 +18,12 @@
             }
         },
         "publication": {
-            "workforce": {
-                "topic": "wfs2Channel",
+            "activities": {
+                "topic": "activitiesChannel",
                 "partition": 0
             },
-            "population": {
-                "topic": "pop3Channel",
+            "persons": {
+                "topic": "personsChannel",
                 "partition": 0
             }
         }

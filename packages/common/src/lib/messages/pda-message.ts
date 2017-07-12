@@ -1,4 +1,4 @@
-import { IPerson } from './person';
+import { IPerson } from '../person';
 
 export interface IPdaMsg {
   requestId: number;

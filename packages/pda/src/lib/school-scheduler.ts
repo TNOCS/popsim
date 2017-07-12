@@ -1,5 +1,5 @@
 import * as distance from '@turf/distance';
-import { stringToDate, createAgendaItem } from './utils';
+import { stringToDate, createAgendaItem, addPersonToActivity } from './utils';
 import { IActivity, IHousehold, ILocation, IPerson, PersonRole, LocationType, getFather, getMother, isUnemployed, ActivityType, ActivityManager, randomString } from '@popsim/common';
 import { config } from './configuration';
 import { RuleEngineFactory, IState, IActionOptions } from '@popsim/rules';
@@ -30,9 +30,9 @@ export const CreateSchoolScheduler = (startTime: Date) => {
   const alreadyGoingToSchool = (parent: IPerson, child: IPerson, school: ILocation) => {
     if (!parent.agenda) { return false; }
     const activityAgenda = activityManager.getActivities(parent.agenda);
-    const a = activityAgenda.reduce((prev, cur) => prev === null && cur.location.bId === school.bId ? cur : prev, null);
+    const a = activityAgenda.reduce((prev, cur) => prev === null && cur.location.bId === school.bId ? cur : prev, undefined);
     if (!a) { return false; }
-    createAgendaItem(child, a.name, a.start, a.end, a.activity, school);
+    addPersonToActivity(child, a);
     return true;
   };
 
@@ -69,14 +69,12 @@ export const CreateSchoolScheduler = (startTime: Date) => {
       const fatherUnemployed = isUnemployed(father);
       if (mother && activityManager.hasTime(mother, startsAt, endsAt) && (!father || motherUnemployed || (father && !fatherUnemployed))) {
         // Mother will do it
-        createAgendaItem(mother, 'Travelling to school', startsAt, endsAt, activityType, school);
-        createAgendaItem(child, 'Travelling to school with mother', startsAt, endsAt, activityType, school);
+        createAgendaItem('Travelling to school', startsAt, endsAt, activityType, school, [ mother, child ]);
       } else if (father && activityManager.hasTime(father, startsAt, endsAt)) {
         // Father will do it
-        createAgendaItem(father, 'Travelling to school', startsAt, endsAt, activityType, school);
-        createAgendaItem(child, 'Travelling to school with father', startsAt, endsAt, activityType, school);
+        createAgendaItem('Travelling to school', startsAt, endsAt, activityType, school, [ father, child ]);
       } else {
-        createAgendaItem(child, 'Travelling to school (parents do not have time)', startsAt, endsAt, activityType, school);
+        createAgendaItem('Travelling to school alone', startsAt, endsAt, activityType, school, [ child ]);
       }
     }
   });
@@ -89,14 +87,14 @@ export const CreateSchoolScheduler = (startTime: Date) => {
         const schedule = config.primarySchools.schedule[day];
         const start = stringToDate(startTime, randomString(schedule.starts));
         const end = stringToDate(startTime, randomString(schedule.ends));
-        return createAgendaItem(child, 'Attending primary school', start, end, ActivityType.working, school);
+        return createAgendaItem('Attending primary school', start, end, ActivityType.working, school, [ child ]);
       }
     } else if (school.locType === LocationType.secondarySchool) {
       if (config.secondarySchools.schedule.hasOwnProperty(day)) {
         const schedule = config.secondarySchools.schedule[day];
         const start = stringToDate(startTime, randomString(schedule.starts));
         const end = stringToDate(startTime, randomString(schedule.ends));
-        return createAgendaItem(child, 'Attending secondary school', start, end, ActivityType.working, school);
+        return createAgendaItem('Attending secondary school', start, end, ActivityType.working, school, [ child ]);
       }
     }
     return null;
@@ -130,7 +128,7 @@ export const CreateSchoolScheduler = (startTime: Date) => {
       const timeInSec = travelDistance / speedMs;
       const startsAt = new Date(activity.start.valueOf() - timeInSec * 1000);
       const endsAt = activity.start;
-      createAgendaItem(child, 'Travelling to school alone', startsAt, endsAt, activityType, school);
+      createAgendaItem('Travelling to school alone', startsAt, endsAt, activityType, school, [ child ]);
     }
   };
 

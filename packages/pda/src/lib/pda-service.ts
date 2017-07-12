@@ -1,13 +1,14 @@
 import { AgendaForChild } from './agenda-for-child';
 import { AgendaForSingle } from './agenda-for-single';
-import { getChildren, ISimRequestMessage, IPopulationMsg, IPerson, isParent, isSingle } from '@popsim/common';
+import { getChildren, ISimRequestMessage, IPopulationMsg, IPerson, isParent, isSingle, PersonManager } from '@popsim/common';
 import { AgendaForParent } from './agenda-for-parent';
 
 export class PdaService {
   constructor(private sim: ISimRequestMessage, private pop: IPopulationMsg) { }
 
   public createAgendasAsync() {
-    return new Promise<IPerson[]>((resolve) => {
+    // return new Promise<{ persons: { [guid: string]: IPerson | undefined }, activities: { [guid: string]: IActivity | undefined } }>((resolve) => {
+    return new Promise<{ [guid: string]: IPerson | undefined }>((resolve) => {
       const persons = this.createAgendas();
       resolve(persons);
     });
@@ -22,7 +23,7 @@ export class PdaService {
    * @memberof PdaService
    */
   private createAgendas() {
-    const persons: IPerson[] = [];
+    const personManager = PersonManager.getInstance();
 
     const simStartTime = new Date(this.sim.simulationStartTime);
     const simEndTime = new Date(this.sim.simulationEndTime);
@@ -32,6 +33,7 @@ export class PdaService {
     const agendaForSingle = AgendaForSingle(simStartTime, simEndTime);
 
     this.pop.households.forEach(h => {
+      h.persons.forEach(p => p.id = personManager.add(p));
       const children = getChildren(h);
       children.forEach(child => agendaForChild(child, h));
       h.persons.forEach(p => {
@@ -44,9 +46,10 @@ export class PdaService {
     });
 
     this.pop.others.forEach(p => {
+      p.id = personManager.add(p);
       agendaForSingle(p);
     });
 
-    return persons;
+    return personManager.getAll();
   }
 }

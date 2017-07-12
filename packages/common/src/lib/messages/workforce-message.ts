@@ -1,4 +1,4 @@
-import { IWorkplace } from './workplace';
+import { IWorkplace } from '../workplace';
 
 export interface IWorkforceMsg {
   requestId: number;

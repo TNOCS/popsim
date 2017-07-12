@@ -13,9 +13,16 @@
       }, {
         "topic": "popChannel",
         "partition": 0
+      }, {
+        "topic": "activitiesChannel",
+        "partition": 0
+      }, {
+        "topic": "personsChannel",
+        "partition": 0
       }],
       "options": {
-        "autoCommit": false
+        "autoCommit": false,
+        "fetchMaxBytes": 100000000
       }
     },
     "_subscription": {

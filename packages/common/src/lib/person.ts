@@ -33,10 +33,10 @@ export interface IPerson {
   /**
    * Unique identifier.
    *
-   * @type {number}
+   * @type {string}
    * @memberof IPerson
    */
-  id?: number;
+  id?: string;
   age: number;
   gender: Gender;
   /** When true, person is from selected area. */

@@ -1,4 +1,3 @@
-import { IActivity } from './../../../common/dist/lib/activity.d';
 import { IPerson, IActivity, ActivityType, ILocation, ActivityManager } from '@popsim/common';
 
 const activityManager = ActivityManager.getInstance();
@@ -80,23 +79,40 @@ const insertActivityInAgenda = (agenda: string[], newActivity: IActivity) => {
 /**
  * Create a new agenda item for a person.
  *
- * @param {IPerson} p
  * @param {string} name
  * @param {Date} startTime
  * @param {Date} endTime
  * @param {ActivityType} activityType
  * @param {ILocation} [location]
+ * @param {IPerson[]} group
  * @returns
  */
-export const createAgendaItem = (p: IPerson, name: string, startTime: Date, endTime: Date, activityType: ActivityType, location?: ILocation, group?: string[]) => {
+export const createAgendaItem = (name: string, startTime: Date, endTime: Date, activityType: ActivityType, location: ILocation, group: IPerson[]) => {
   const activity = <IActivity>{
     name: name,
     activity: activityType,
     location: location,
     start: startTime,
     end: endTime,
-    group: group
+    group: group.map(person => person.id)
   };
-  if (p.agenda) { insertActivityInAgenda(p.agenda, activity); }
+  group.forEach(p => {
+    if (!p.agenda) { p.agenda = []; }
+    activity.id = insertActivityInAgenda(p.agenda, activity);
+  });
   return activity;
+};
+
+/**
+ * Add a person to an activity.
+ * This also implies that this activity is added to this person's own agenda.
+ *
+ * @param {IPerson} p
+ * @param {IActivity} activity
+ */
+export const addPersonToActivity = (p: IPerson, activity: IActivity) => {
+  if (!p.agenda) { p.agenda = []; }
+  if (activity.group && p.id) { activity.group.push(p.id); }
+  activityManager.update(activity);
+  insertActivityInAgenda(p.agenda, activity);
 };

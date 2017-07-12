@@ -22,7 +22,7 @@ export const ActivityManager = (() => {
     remove: (guid: string) => void;
     hasTime: (p: IPerson, start: Date, end: Date) => boolean;
     printActivity: (guid: string) => string;
-    printAgenda: (guids: string[]) => string;
+    printAgenda: (guids?: string[]) => string;
   };
 
   /**
@@ -44,7 +44,9 @@ export const ActivityManager = (() => {
    * Get (a clone of) an activity
    * @param guid
    */
-  const get = (guid: string) => activities.hasOwnProperty(guid) ? Object.assign(<IActivity>{ id: guid }, activities[guid]) : undefined;
+  const get = (guid: string) => (activities.hasOwnProperty(guid) && activities[guid])
+    ? Object.assign(<IActivity>{ id: guid }, activities[guid])
+    : undefined;
 
   /**
    * Get a list of (cloned) activities.
@@ -55,9 +57,19 @@ export const ActivityManager = (() => {
     .map(guid => Object.assign(<IActivity>{ id: guid }, activities[guid]));
 
   /**
-   * Returns (a clone of) all activities;
+   * Returns (a clone of) all activities, removing empty entries.
    */
-  const getAll = () => Object.assign({}, activities);
+  const getAll = () => {
+    const all: { [guid: string]: IActivity } = {};
+    for (const guid in activities) {
+      if (!activities.hasOwnProperty(guid)) { continue; }
+      const activity = activities[guid];
+      if (activity) {
+        all[guid] = Object.assign({}, activity);
+      }
+    }
+    return all;
+  };
 
   /**
    * Replace an existing activity with an updated version.
@@ -79,13 +91,14 @@ export const ActivityManager = (() => {
    * @returns GUID of new activity.
    */
   const add = (activity: IActivity) => {
+    if (activity.id) { return activity.id; }
     const guid = makeGuid();
     activities[guid] = activity;
     return guid;
   };
 
   /**
-   * Remove an activity from the manager
+   * Remove an activity from the manager.
    * Actually, we set it to undefined, since deleting the activtiy is a slow operation.
    * @param guid
    */
@@ -116,6 +129,7 @@ export const ActivityManager = (() => {
     });
     return ok;
   };
+
   const printActivity = (guid: string) => {
     const activity = get(guid);
     return activity ? `${activity.start.toLocaleTimeString()} - ${activity.end.toLocaleTimeString()} @ ${LocationType[activity.location.locType]}: ${activity.name}` : ' - missing - ';

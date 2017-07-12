@@ -21,8 +21,8 @@ export const config: {
       options: ConsumerOptions;
     },
     publication: {
-      workforce: OffsetFetchRequest;
-      population: OffsetFetchRequest;
+      activities: OffsetFetchRequest;
+      persons: OffsetFetchRequest;
       options: {
         // Configuration for when to consider a message as acknowledged, default 1
         requireAcks: 1,

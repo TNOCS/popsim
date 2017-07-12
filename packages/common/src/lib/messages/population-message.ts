@@ -1,5 +1,5 @@
-import { IPerson } from './person';
-import { IHousehold } from './household';
+import { IPerson } from '../person';
+import { IHousehold } from '../household';
 
 export interface IPopulationMsg {
   requestId: number;

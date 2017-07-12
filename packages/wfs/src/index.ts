@@ -129,6 +129,10 @@ const setupProducer = () => {
 
   producer.on('ready', () => {
     log(`Producer ready.`);
+    producer.createTopics([options.workforce.topic, options.population.topic], true, (error, data) => {
+      if (error) { return logError(error); }
+      if (data) { log(data); }
+    });
   });
 
   return { populationSender, workforceSender, producer };

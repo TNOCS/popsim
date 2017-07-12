@@ -1,4 +1,4 @@
-import { ISimRequestMessage, IMessage, IPopulationMsg, IWorkforceMsg, logger, logError, ActivityManager } from '@popsim/common';
+import { ISimRequestMessage, IMessage, IPopulationMsg, logger, logError, ActivityManager, IPersonsMsg, IActivitiesMsg } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
@@ -13,12 +13,10 @@ const ee = new PdaEmitter();
 
 const store: {
   pop: { [key: number]: IPopulationMsg };
-  wfs: { [key: number]: IWorkforceMsg };
   sim: { [key: number]: ISimRequestMessage };
   done: number[];
 } = {
     pop: {},
-    wfs: {},
     sim: {},
     done: []
   };
@@ -57,16 +55,6 @@ const setupConsumer = () => {
         store.sim[sim.id] = sim;
         ee.emit('messageReceived', { type: 'sim', key: sim.id });
         break;
-      case 'wfsChannel':
-        log('WFS message received.');
-        const wfs = <IWorkforceMsg>JSON.parse(message.value);
-        if (wfs.workplaces && wfs.workplaces.length > 0) {
-          if (store.wfs.hasOwnProperty(wfs.requestId)) { return; }
-          store.wfs[wfs.requestId] = wfs;
-          ee.emit('messageReceived', { type: 'wfs', key: wfs.requestId });
-          // log(bag.workplaces[0]);
-        }
-        break;
       default:
         log(`Unknown message: ${topic}`);
         log(JSON.stringify(message, null, 2).substr(0, 1024));
@@ -82,7 +70,7 @@ const setupConsumer = () => {
   return consumer;
 };
 
-const setupProducer = () => {
+const setupProducers = () => {
   const client = new Client(conOpt.host, conOpt.clientId + '_producer');
   const producer = new Producer(client);
 
@@ -91,64 +79,78 @@ const setupProducer = () => {
   });
 
   const options = config.kafka.publication;
-  const populationSender = (msg: string) => {
+  const personsSender = (message: IPersonsMsg) => {
+    const msg = JSON.stringify(message);
     const payloads = [{
-      topic: options.population.topic,
-      partition: options.population.partition,
+      topic: options.persons.topic,
+      partition: options.persons.partition,
       messages: msg
     }];
-    log(`Sending message to topic ${options.population.topic}/${options.population.partition}:
+    log(`Sending message to topic ${options.persons.topic}/${options.persons.partition}:
     ${msg.substr(0, Math.min(msg.length, 1024))}`);
     producer.send(payloads, (err, data) => {
-      if (err) { logError('>> PDA population sender: ' + err); }
+      if (err) { logError('>> PDA persons sender: ' + err); }
     });
   };
 
-  const workforceSender = (msg: string) => {
+  const activitiesSender = (message: IActivitiesMsg) => {
+    const msg = JSON.stringify(message);
     const payloads = [{
-      topic: options.workforce.topic,
-      partition: options.workforce.partition,
+      topic: options.activities.topic,
+      partition: options.activities.partition,
       messages: msg
     }];
-    log(`Sending message to topic ${options.workforce.topic}/${options.workforce.partition}:
+    log(`Sending message to topic ${options.activities.topic}/${options.activities.partition}:
     ${msg.substr(0, Math.min(msg.length, 1024))}`);
+    // fs.writeFileSync('activities.json', msg);
     producer.send(payloads, (err, data) => {
-      if (err) { logError('>> PDA workforce sender: ' + err); }
+      if (err) { logError('>> PDA activities sender: ' + err); }
     });
   };
 
   producer.on('ready', () => {
     log(`Producer ready.`);
+    producer.createTopics([options.activities.topic, options.persons.topic], true, (error, data: string[]) => {
+      if (error) { return logError(error); }
+      if (data) { log(`Successfully created topics: ${data.join(', ')}.`); }
+    });
   });
 
-  return { populationSender, workforceSender, producer };
+  return { personsSender, activitiesSender, producer };
 };
 
-const setupAgenda = (populationSender: (msg: string) => void, workforceSender: (msg: string) => void) => {
+const setupAgenda = (personsSender: (msg: IPersonsMsg) => void, activitiesSender: (msg: IActivitiesMsg) => void) => {
   ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
-    if (store.done.indexOf(key) >= 0 || !store.pop.hasOwnProperty(key) || !store.wfs.hasOwnProperty(key) || !store.sim.hasOwnProperty(key)) { return; }
+    if (store.done.indexOf(key) >= 0 || !store.pop.hasOwnProperty(key) || !store.sim.hasOwnProperty(key)) { return; }
     log(`All required data received. Starting to process`);
     store.done.push(key);
-    // const wfs = store.wfs[key];
     const pop = store.pop[key];
     const sim = store.sim[key];
     const pdaSvc = new PdaService(sim, pop);
     pdaSvc.createAgendasAsync()
-      .then(workplaces => {
-        // workforceSender(JSON.stringify(workplaces));
+      .then(persons => {
         const activityManager = ActivityManager.getInstance();
-        pop.households.forEach(h => h.persons.forEach(p => log(activityManager.printAgenda(p.agenda)) ));
-        populationSender(JSON.stringify(pop)); // should have been augmented with non-local persons (others)
+        // pop.households.forEach(h => h.persons.forEach(p => log(activityManager.printAgenda(p.agenda)) ));
+        personsSender(<IPersonsMsg> {
+          requestId: pop.requestId,
+          bbox: pop.bbox,
+          persons: persons
+        }); // should have been augmented with non-local persons (others)
+        activitiesSender(<IActivitiesMsg> {
+          requestId: pop.requestId,
+          bbox: pop.bbox,
+          activities: activityManager.getAll()
+        }); // should have been augmented with non-local persons (others)
         log('Complete');
       });
   });
 };
 
-const { populationSender, workforceSender,  producer } = setupProducer();
+const { activitiesSender, personsSender,  producer } = setupProducers();
 const consumer = setupConsumer();
-setupAgenda(populationSender, workforceSender);
+setupAgenda(personsSender, activitiesSender);
 
 process.on('SIGINT', function () {
   log('Caught interrupt signal');
