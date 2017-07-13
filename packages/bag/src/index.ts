@@ -3,7 +3,7 @@ import { Client, Consumer, Producer, ProduceRequest } from 'kafka-node';
 import { config } from './lib/configuration';
 import * as pg2bag from './lib/pg2bag';
 
-process.title = 'bag_service';
+process.title = config.kafka.clientId;
 const log = logger(config.logging);
 
 const conOpt = config.kafka;

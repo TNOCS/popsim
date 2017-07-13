@@ -4,7 +4,7 @@ import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { WorkforceService } from './lib/workforce-service';
 
-process.title = 'workforce_service';
+process.title = config.kafka.clientId;
 
 const log = logger(config.logging);
 

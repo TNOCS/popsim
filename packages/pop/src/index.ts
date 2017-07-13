@@ -4,7 +4,7 @@ import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 
-process.title = 'population_service';
+process.title = config.kafka.clientId;
 
 const log = logger(config.logging);
 

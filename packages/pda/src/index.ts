@@ -4,7 +4,7 @@ import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { PdaService } from './lib/pda-service';
 
-process.title = 'pda_service';
+process.title = config.kafka.clientId;
 
 const log = logger(config.logging);
 

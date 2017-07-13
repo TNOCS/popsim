@@ -5,7 +5,7 @@ import * as area from '@turf/area';
 import { config } from './lib/configuration';
 import * as pg2cbs from './lib/pg2cbs';
 
-process.title = 'cbs_service';
+process.title = config.kafka.clientId;
 const log = logger(config.logging);
 
 const conOpt = config.kafka;

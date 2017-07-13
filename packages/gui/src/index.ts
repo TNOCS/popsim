@@ -2,7 +2,7 @@ import { ISimRequestMessage, logger, logError } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 
-process.title = 'gui_service';
+process.title = config.kafka.clientId;
 const log = logger(config.logging);
 
 const conOpt = config.kafka;
