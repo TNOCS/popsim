@@ -1,0 +1,53 @@
+{
+    "logging": true,
+    "overpass": {
+        "query": [
+            "[bbox:{{bbox}}]",
+            "[out:json];",
+            "(",
+            "  relation[\"route\"=\"foot\"]->.cr;",
+            "  relation[\"route\"=\"bicycle\"]->.cr;",
+            "  way[\"highway\"=\"pedestrian\"];",
+            "  way[\"highway\"=\"cycleway\"];",
+            "  way[\"highway\"=\"footway\"];",
+            "  way[\"highway\"=\"cycleway\"];",
+            "  way[\"highway\"=\"path\"];",
+            "  way[\"highway\"=\"bridleway\"];",
+            "  way[\"highway\"=\"track\"];",
+            "  way[\"highway\"=\"steps\"];",
+            "  way[\"highway\"=\"service\"];",
+            "  way[\"highway\"=\"residential\"];",
+            "  way[\"highway\"=\"unclassified\"];",
+            "  way[\"highway\"=\"tertiary\"];",
+            ");",
+            "out;",
+            ">;",
+            "out skel qt;"
+        ],
+        "url": "http://overpass-api.de/api/interpreter"
+    },
+    "kafka": {
+        "clientId": "navSvc",
+        "host": "localhost:2181",
+        "subscription": {
+            "topics": [{
+                "topic": "bagChannel",
+                "partition": 0
+            }, {
+                "topic": "simChannel",
+                "partition": 0
+            }],
+            "options": {
+                "autoCommit": false,
+                "fetchMaxWaitMs": 1000,
+                "fetchMaxBytes": 30000000
+            }
+        },
+        "publication": {
+            "nav": {
+                "topic": "navChannel",
+                "partition": 0
+            }
+        }
+    }
+}
