@@ -30,6 +30,7 @@ export const config: {
     },
     publication: {
       nav: OffsetFetchRequest;
+      map: OffsetFetchRequest;
       options: {
         // Configuration for when to consider a message as acknowledged, default 1
         requireAcks: 1,

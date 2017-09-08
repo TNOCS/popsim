@@ -8,6 +8,8 @@ export * from './lib/logger';
 export * from './lib/messages/activities-message';
 export * from './lib/messages/message';
 export * from './lib/messages/pda-message';
+export * from './lib/messages/pedestrian-map-message';
+export * from './lib/messages/pedestrian-graph-message';
 export * from './lib/messages/persons-message';
 export * from './lib/messages/population-message';
 export * from './lib/messages/sim-request-message';

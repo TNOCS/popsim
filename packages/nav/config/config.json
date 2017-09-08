@@ -44,6 +44,10 @@
             }
         },
         "publication": {
+            "map": {
+                "topic": "mapChannel",
+                "partition": 0
+            },
             "nav": {
                 "topic": "navChannel",
                 "partition": 0

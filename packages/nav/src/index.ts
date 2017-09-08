@@ -1,4 +1,4 @@
-import { IBuildingFeatureCollection, ISimRequestMessage, IMessage, logger, logError } from '@popsim/common';
+import { IBuildingFeatureCollection, ISimRequestMessage, IMessage, logger, logError, IPedestrianMapMsg, IPedestrianGraphMsg } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
@@ -77,7 +77,21 @@ const setupProducers = () => {
   });
 
   const options = config.kafka.publication;
-  const navSender = (message: any) => {
+  const navSender = (message: IPedestrianMapMsg) => {
+    const msg = JSON.stringify(message);
+    const payloads = [{
+      topic: options.map.topic,
+      partition: options.map.partition,
+      messages: msg
+    }];
+    log(`Sending message to topic ${options.map.topic}/${options.map.partition}:
+    ${msg.substr(0, Math.min(msg.length, 1024))}`);
+    producer.send(payloads, (err, data) => {
+      if (err) { logError('>> NAV map sender: ' + err); }
+    });
+  };
+
+  const graphSender = (message: IPedestrianGraphMsg) => {
     const msg = JSON.stringify(message);
     const payloads = [{
       topic: options.nav.topic,
@@ -99,10 +113,10 @@ const setupProducers = () => {
     });
   });
 
-  return { navSender, producer };
+  return { navSender, graphSender, producer };
 };
 
-const setupNavigationMapSvc = (navSender: (msg: any) => void) => {
+const setupNavigationMapSvc = (navSender: (msg: IPedestrianMapMsg) => void, graphSender: (msg: IPedestrianGraphMsg) => void) => {
   ee.on('messageReceived', (msg: { type: string; key: number }) => {
     const key = msg.key;
     log(`Type ${msg.type}, key ${key}`);
@@ -111,20 +125,25 @@ const setupNavigationMapSvc = (navSender: (msg: any) => void) => {
     const bag = store.bag[key];
     const navSvc = new NavService(bag);
     navSvc.createNavigationMapAsync()
-      .then(map => {
-        navSender( { // <INavMsg>{
+      .then(result => {
+        navSender({
           requestId: bag.requestId,
           bbox: bag.bbox,
-          persons: map
+          map: result.geojson
+        });
+        graphSender({
+          requestId: bag.requestId,
+          bbox: bag.bbox,
+          graph: result.graph
         });
         log('Complete');
       });
   });
 };
 
-const { navSender, producer } = setupProducers();
+const { navSender, graphSender, producer } = setupProducers();
 const consumer = setupConsumer();
-setupNavigationMapSvc(navSender);
+setupNavigationMapSvc(navSender, graphSender);
 
 process.on('SIGINT', function () {
   log('Caught interrupt signal');

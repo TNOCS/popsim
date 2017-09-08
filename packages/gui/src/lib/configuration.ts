@@ -23,11 +23,11 @@ export const config: {
       }
     }
   }
-  user: string; //env var: PGUSER
-  database: string; //env var: PGDATABASE
-  password: string; //env var: PGPASSWORD
+  user: string; // env var: PGUSER
+  database: string; // env var: PGDATABASE
+  password: string; // env var: PGPASSWORD
   host: string; // Server hosting the postgres database
-  port: number; //env var: PGPORT
+  port: number; // env var: PGPORT
   max: number; // max number of clients in the pool
   idleTimeoutMillis: number; // how long a client is allowed to remain idle before being closed
 } = <any>Object.assign(baseConfig, localConfig);
