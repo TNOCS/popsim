@@ -87,15 +87,16 @@ const insertActivityInAgenda = (agenda: string[], newActivity: IActivity) => {
  * @param {IPerson[]} group
  * @returns
  */
-export const createAgendaItem = (name: string, startTime: Date, endTime: Date, activityType: ActivityType, location: ILocation, group: IPerson[]) => {
-  const activity = <IActivity>{
+export const createAgendaItem = (name: string, speed: number, startTime: Date, endTime: Date, activityType: ActivityType, location: ILocation, group: IPerson[]) => {
+  const activity = {
     name: name,
+    speed: speed,
     activity: activityType,
     location: location,
     start: startTime,
     end: endTime,
     group: group.map(person => person.id)
-  };
+  } as IActivity;
   group.forEach(p => {
     if (!p.agenda) { p.agenda = []; }
     activity.id = insertActivityInAgenda(p.agenda, activity);

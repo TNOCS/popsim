@@ -50,7 +50,7 @@ export const CreateWorkScheduler = (startTime: Date) => {
       destination: workplace,
       arrivalTime: startsAt
     });
-    createAgendaItem('At work', startsAt, endsAt, ActivityType.working, workplace, [ employee ]);
+    createAgendaItem('At work', 0, startsAt, endsAt, ActivityType.working, workplace, [ employee ]);
     transportationScheduler.run({
       employee, travelDistance,
       age: employee.age,

@@ -69,12 +69,12 @@ export const CreateSchoolScheduler = (startTime: Date) => {
       const fatherUnemployed = isUnemployed(father);
       if (mother && activityManager.hasTime(mother, startsAt, endsAt) && (!father || motherUnemployed || (father && !fatherUnemployed))) {
         // Mother will do it
-        createAgendaItem('Travelling to school', startsAt, endsAt, activityType, school, [ mother, child ]);
+        createAgendaItem('Travelling to school', speed, startsAt, endsAt, activityType, school, [ mother, child ]);
       } else if (father && activityManager.hasTime(father, startsAt, endsAt)) {
         // Father will do it
-        createAgendaItem('Travelling to school', startsAt, endsAt, activityType, school, [ father, child ]);
+        createAgendaItem('Travelling to school', speed, startsAt, endsAt, activityType, school, [ father, child ]);
       } else {
-        createAgendaItem('Travelling to school alone', startsAt, endsAt, activityType, school, [ child ]);
+        createAgendaItem('Travelling to school alone', speed, startsAt, endsAt, activityType, school, [ child ]);
       }
     }
   });
@@ -87,14 +87,14 @@ export const CreateSchoolScheduler = (startTime: Date) => {
         const schedule = config.primarySchools.schedule[day];
         const start = stringToDate(startTime, randomString(schedule.starts));
         const end = stringToDate(startTime, randomString(schedule.ends));
-        return createAgendaItem('Attending primary school', start, end, ActivityType.working, school, [ child ]);
+        return createAgendaItem('Attending primary school', 0, start, end, ActivityType.working, school, [ child ]);
       }
     } else if (school.locType === LocationType.secondarySchool) {
       if (config.secondarySchools.schedule.hasOwnProperty(day)) {
         const schedule = config.secondarySchools.schedule[day];
         const start = stringToDate(startTime, randomString(schedule.starts));
         const end = stringToDate(startTime, randomString(schedule.ends));
-        return createAgendaItem('Attending secondary school', start, end, ActivityType.working, school, [ child ]);
+        return createAgendaItem('Attending secondary school', 0, start, end, ActivityType.working, school, [ child ]);
       }
     }
     return null;
@@ -128,7 +128,7 @@ export const CreateSchoolScheduler = (startTime: Date) => {
       const timeInSec = travelDistance / speedMs;
       const startsAt = new Date(activity.start.valueOf() - timeInSec * 1000);
       const endsAt = activity.start;
-      createAgendaItem('Travelling to school alone', startsAt, endsAt, activityType, school, [ child ]);
+      createAgendaItem('Travelling to school alone', speed, startsAt, endsAt, activityType, school, [ child ]);
     }
   };
 
