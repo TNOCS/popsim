@@ -26,7 +26,7 @@ defmodule Messenger.MessageProcessor do
     endTime = DateTime.from_unix!(endTime, :millisecond)
     IO.inspect startTime
     IO.inspect endTime
-    ECS.Sim.Engine.set([startTime: startTime, endTime: endTime, dt: 1])
+    ECS.Sim.Engine.set(startTime: startTime, endTime: endTime, dt: 1)
     IO.puts "Ready processing simChannel message with id #{id}"
     :ok # The handle_message function MUST return :ok
   end
