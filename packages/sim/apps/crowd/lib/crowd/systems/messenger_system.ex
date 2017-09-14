@@ -10,8 +10,11 @@ defmodule Crowd.Systems.MessengerSystem do
   @mask Crowd.Utils.create_mask( PositionComponent.new )
   @position PositionComponent.name
   @moveable MoveableComponent.name
+  @time_between_messages_in_seconds 5
 
   def init(_time, _dt) do
+    Agent.start_link(fn -> %{ lastMsg: DateTime.utc_now } end, name: __MODULE__)
+
     # Send an empty message, ignoring errors, so the channel is created and you don't loose the first message.
     case Kaffe.Producer.produce_sync("crowdChannel", []) do
       # {:error, reason} -> IO.puts reason
@@ -20,9 +23,20 @@ defmodule Crowd.Systems.MessengerSystem do
   end
 
   def update(time, _dt) do
-    IO.puts "Sending positions at #{time}, mask: #{@mask}"
-    Task.start fn -> send_entities(ECS.Registry.get(@mask)) end
-    # send_entities(ECS.Registry.get(@mask))
+    send? = Agent.get_and_update(__MODULE__, fn state ->
+      now = DateTime.utc_now;
+      dif = DateTime.diff(now, state.lastMsg) # Difference in seconds
+      if ( dif > @time_between_messages_in_seconds) do
+        newState = %{ state | lastMsg: now }
+        { true, newState }
+      else
+        { false, state }
+      end
+    end)
+    if (send?) do
+      IO.puts "Sending positions at #{time}, mask: #{@mask}"
+      Task.start fn -> send_entities(ECS.Registry.get(@mask)) end
+    end
   end
 
   def send_entities(entities) do
