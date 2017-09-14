@@ -127,7 +127,6 @@ defmodule ECS.Sim.Engine do
 
   def handle_cast(:stop, state) do
     IO.puts "STOP:"
-    IO.inspect state
     if state.running do
       newState = %{ state | running: false }
       {:noreply, newState}
