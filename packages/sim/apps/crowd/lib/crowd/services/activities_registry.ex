@@ -1,10 +1,12 @@
 defmodule Crowd.Services.ActivitiesRegistry do
   use Agent
 
+  @name { :global, __MODULE__ }
+
   def start_link(_opts) do
     IO.puts "Creating ETS table"
     :ets.new(:activities_registry, [:set, :public, :named_table]) # Must be public, since many tasks write to it concurrently
-    # Agent.start_link(fn -> %{} end, name: @name)
+    Agent.start_link(fn -> %{} end, name: @name)
   end
 
   @doc """
