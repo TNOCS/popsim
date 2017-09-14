@@ -1,6 +1,34 @@
 # Sim
 
-**TODO: Add description**
+## Description
+
+A very simple crowd simulator that makes entities move between between agenda locations. It uses Elixir and the Entity-Component-System approach.
+
+
+## Installation
+
+Run
+```c
+mix deps.get
+```
+To download all dependencies.
+
+## Usage
+
+Open simulation console:
+```c
+iex -S mix
+```
+Wait for the messages (persons, activities, simulation) to have loaded, and call
+```elixir
+ECS.Sim.Engine.init
+ECS.Sim.Engine.step
+```
+to enter step mode, or
+```elixir
+ECS.Sim.Engine.start
+```
+to keep on running.
 
 
 ## TODO
@@ -8,21 +36,21 @@
 ### Phase 1
 
 - Agenda:
-  - active?: boolean
-  - awake: DateTime, when we should start moving the person again.
+  - DONE active?: boolean
+  - DONE awake: DateTime, when we should start moving the person again.
   - maintain current or next activity?
 - MovementSystem:
-  - check agenda and determine awake time
-  - ignore all persons that are asleep (sim time < awake time)
+  - DONE check agenda and determine awake time
+  - DONE ignore all persons that are asleep (sim time < awake time)
   - Update position based on path in MovementComponent
 - ObserverSystem:
-  - Transmit new positions to Messenger
-- Create activity registry
+  - DONE Transmit new positions to Messenger
+- DONE Create activity registry
 - Messenger:
-  - Add activities to registry
-  - Set speed based on information from person - speed is derived from activity
-  - Receive start and end time and set in ECS.Sim.Engine
-  - Send person positions %Crowd.Person{ id, x, y, inside }
+  - DONE Add activities to registry
+  - DONE Set speed based on information from person - speed is derived from activity
+  - DONE Receive start and end time and set in ECS.Sim.Engine
+  - DONE Send person positions %Crowd.Person{ id, x, y, inside }
 
 #### DONE Phase 1
 - MovementComponent
