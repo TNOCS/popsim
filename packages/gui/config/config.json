@@ -1,53 +1,56 @@
 {
-  "logging": true,
-  "kafka": {
-    "clientId": "guiSvc",
-    "host": "localhost:2181",
-    "subscription": {
-      "topics": [{
-        "topic": "bagChannel",
-        "partition": 0
-      }, {
-        "topic": "cbsChannel",
-        "partition": 0
-      }, {
-        "topic": "popChannel",
-        "partition": 0
-      }, {
-        "topic": "activitiesChannel",
-        "partition": 0
-      }, {
-        "topic": "personsChannel",
-        "partition": 0
-      }],
-      "options": {
-        "autoCommit": false,
-        "fetchMaxBytes": 100000000
-      }
-    },
-    "_subscription": {
-      "topics": [{
-        "topic": "bagChannel",
-        "partition": 0
-      }, {
-        "topic": "cbsChannel",
-        "partition": 0
-      }, {
-        "topic": "popChannel",
-        "partition": 0
-      }, {
-        "topic": "crowdChannel",
-        "partition": 0
-      }],
-      "options": {
-        "autoCommit": false
-      }
-    },
-    "publication": {
-      "area": {
-        "topic": "simChannel",
-        "partition": 0
-      }
+    "logging": true,
+    "kafka": {
+        "clientId": "guiSvc",
+        "host": "localhost:2181",
+        "subscription": {
+            "topics": [{
+                "topic": "bagChannel",
+                "partition": 0
+            }, {
+                "topic": "cbsChannel",
+                "partition": 0
+            }, {
+                "topic": "popChannel",
+                "partition": 0
+            }, {
+                "topic": "activitiesChannel",
+                "partition": 0
+            }, {
+                "topic": "personsChannel",
+                "partition": 0
+            }, {
+                "topic": "crowdChannel",
+                "partition": 0
+            }],
+            "options": {
+                "autoCommit": false,
+                "fetchMaxBytes": 100000000
+            }
+        },
+        "_subscription": {
+            "topics": [{
+                "topic": "bagChannel",
+                "partition": 0
+            }, {
+                "topic": "cbsChannel",
+                "partition": 0
+            }, {
+                "topic": "popChannel",
+                "partition": 0
+            }, {
+                "topic": "crowdChannel",
+                "partition": 0
+            }],
+            "options": {
+                "autoCommit": false
+            }
+        },
+        "publication": {
+            "area": {
+                "topic": "simChannel",
+                "partition": 0
+            }
+        }
     }
-  }
 }
