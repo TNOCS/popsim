@@ -36,6 +36,11 @@ defmodule Messenger.MessageProcessor do
     :ok # The handle_message function MUST return :ok
   end
 
+  def handle_message(%{topic: "personsChannel", value: value}) do
+    Task.start(fn -> process_persons(value) end )
+    :ok # The handle_message function MUST return :ok
+  end
+
   defp process_activities(message) do
     json = Poison.decode!(message)
     IO.puts "Starting to process activitiesChannel message with id #{json["requestId"]}"
@@ -49,11 +54,6 @@ defmodule Messenger.MessageProcessor do
     difTime = DateTime.diff endTime, startTime, :millisecond
     IO.puts "Time to process all activities: #{difTime} msec"
     IO.puts "Ready processing activitiesChannel message with id #{json["requestId"]} and #{count} activities."
-  end
-
-  def handle_message(%{topic: "personsChannel", value: value}) do
-    Task.start(fn -> process_persons(value) end )
-    :ok # The handle_message function MUST return :ok
   end
 
   defp process_persons(message) do
@@ -74,9 +74,10 @@ defmodule Messenger.MessageProcessor do
 
   defp process_person({_id, data}) do
     # IO.inspect data
-    %{"age" => age,
-      "gender" => gender,
-      "isLocal"  => local,
+    %{
+      # "age" => age,
+      # "gender" => gender,
+      # "isLocal"  => local,
       "agenda" => activities,
       "locations" => locations,
       "roles" => roles
@@ -90,9 +91,9 @@ defmodule Messenger.MessageProcessor do
       # IO.inspect locations
       # IO.inspect roles
 
-      roleList = roles
-      |> Enum.map(fn (%{"location" => location, "role" => role}) -> %{ loc: location, role: role } end)
-      |> Enum.into([])
+      # roleList = roles
+      # |> Enum.map(fn (%{"location" => location, "role" => role}) -> %{ loc: location, role: role } end)
+      # |> Enum.into([])
 
       locList = locations
       |> Enum.map(fn (%{ "geo" => geo, "locType" => locType, "relType" => relType}) ->
