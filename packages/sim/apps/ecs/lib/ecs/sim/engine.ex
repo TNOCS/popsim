@@ -30,7 +30,7 @@ defmodule ECS.Sim.Engine do
   - endTime
   - dt: step size in seconds
   """
-  def set(startTime: startTime, endTime: endTime, dt: dt) do
+  def set([startTime: startTime, endTime: endTime, dt: dt]) do
     GenServer.cast(@name, {:set, startTime, endTime, dt })
   end
 

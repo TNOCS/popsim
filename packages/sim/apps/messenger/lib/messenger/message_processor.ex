@@ -26,7 +26,7 @@ defmodule Messenger.MessageProcessor do
     endTime = DateTime.from_unix!(endTime, :millisecond)
     IO.inspect startTime
     IO.inspect endTime
-    ECS.Sim.Engine.set(startTime: startTime, endTime: endTime, dt: 1)
+    ECS.Sim.Engine.set([startTime: startTime, endTime: endTime, dt: 1])
     IO.puts "Ready processing simChannel message with id #{id}"
     :ok # The handle_message function MUST return :ok
   end
@@ -40,6 +40,14 @@ defmodule Messenger.MessageProcessor do
     Task.start(fn -> process_persons(value) end )
     :ok # The handle_message function MUST return :ok
   end
+
+  def handle_message(message) do
+    IO.puts "Unknown message received"
+    IO.inspect message
+    :ok # The handle_message function MUST return :ok
+  end
+
+  # PRIVATE METHODS
 
   defp process_activities(message) do
     json = Poison.decode!(message)
@@ -64,12 +72,6 @@ defmodule Messenger.MessageProcessor do
     json["persons"]
     |> Enum.each(fn (person) -> process_person(person) end)
     IO.puts "Ready processing personsChannel message with id #{json["requestId"]}"
-  end
-
-  def handle_message(message) do
-    IO.puts "Unknown message received"
-    IO.inspect message
-    :ok # The handle_message function MUST return :ok
   end
 
   defp process_person({_id, data}) do
