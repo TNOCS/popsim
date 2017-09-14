@@ -12,8 +12,9 @@ defmodule Crowd.Systems.MessengerSystem do
   @moveable MoveableComponent.name
 
   def init(_time, _dt) do
+    # Send an empty message, ignoring errors, so the channel is created and you don't loose the first message.
     case Kaffe.Producer.produce_sync("crowdChannel", []) do
-      {:error, reason} -> IO.puts reason
+      # {:error, reason} -> IO.puts reason
       _ -> :ok
     end
   end
@@ -35,11 +36,12 @@ defmodule Crowd.Systems.MessengerSystem do
   defp extract_properties_to_send(entity) do
     Agent.get(entity.pid, fn s ->
       %{
-        id: entity.id,
-        x: s[@position].x,
-        y: s[@position].y,
-        v: s[@moveable].speed
-       }
+        entity.id => %{
+          x: s[@position].x,
+          y: s[@position].y,
+          v: s[@moveable].speed
+        }
+      }
     end)
   end
 
