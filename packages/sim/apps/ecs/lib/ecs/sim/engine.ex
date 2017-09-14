@@ -151,8 +151,7 @@ defmodule ECS.Sim.Engine do
     state.systems
     |> Enum.each(&{ &1.update(state.curTime, state.dt)})
 
-    updatedTime = state.curTime
-    |> DateTime.to_unix(:millisecond) + 1000 * state.dt
+    updatedTime = DateTime.to_unix(state.curTime, :millisecond) + 1000 * state.dt
     |> DateTime.from_unix!(:millisecond)
     state = %{state | curTime: updatedTime }
     # time = DateTime.utc_now()
