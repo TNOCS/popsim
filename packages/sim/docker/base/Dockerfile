@@ -1,4 +1,4 @@
-FROM erikvullings/elixir_full
+FROM bitwalker/alpine-elixir
 MAINTAINER Erik Vullings <erik.vullings@gmail.com>
 
 # Run `docker build . -t erikvullings/elixir_full`
