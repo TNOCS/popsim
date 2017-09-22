@@ -8,7 +8,7 @@ MAINTAINER Erik Vullings <erik.vullings@gmail.com>
 
 RUN apk update && \
     apk upgrade && \
-    apk --update add \
+    apk --update --no-cache add \
         gcc \
         g++ \
         build-base \
