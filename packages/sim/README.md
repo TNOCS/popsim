@@ -72,3 +72,21 @@ to keep on running.
   - Receive start and end positions in x, y, and compute a path of nodes (x, y positions)
 - MovementSystem
   - Uses PathPlanner
+
+
+  ## Gedragsregels
+
+- Mensen nemen de weg terug die ze gekomen zijn
+- It is recognized that every person involved in an emergency will feel some form of stress regardless of their age, gender, past experience, training or cultural background.
+- The performance of the person in dealing with a stressful situation will depend on the task demands, the environmental conditions and the subject himself or herself
+- In order to make a decision the person will process information, perceived in the environment or drawn from past experience
+- Decision-making during an emergency is different from day-to-day decision-making for three main reasons. First, there is much more at stake in emergency decisions - often the survival of the person and of the people he or she values the most is at play. Second, the amount of time available is limited to make a decision before crucial options are lost. Third, the information on which to base a decision is ambiguous, incomplete and unusual, further it is usually impossible to look for more appropriate information due to the lack of both time and means to get information
+- group cohesiveness, a striving for unanimity, pressures for conformity in reaching a decision, self-censoring of different ideas, guarding oneself against information that conflicts with the group’s desired solution and illusions and misperceptions of invulnerability.
+- research shows that 9.9 times out of 10, people don’t turn into crazed individuals, but behave quite rationally. They tend to help each other too.
+- elements that have to be considered at events such as drug and alcohol consumption
+- Social media could potentially have a bigger effect on the crowd than alcohol and drugs combined. A disturbing social post can travel at the speed of light and cause mass disruption
+- concept of commitment. Occupants who have paid good money to watch a trendy movie are not prepared to leave while they are engrossed in the story.
+- In a museum or a department store, most occupants play the role of visitors and as such, they expect to be taken care of. If the fire alarm signal is activated, there are social interactions taking place: people will be looking at what others are doing. Therefore, if others are not paying attention to the fire alarm signal, occupants become reluctant to take any action that would make them appear out of place or over-reacting to an insignificant situation. The role of visitors is usually to conform to the general behaviour of others.
+- Furthermore, visitors feel that it is their role to wait for instructions, even if they have recognized the signal as a fire alarm signal. They expect that someone will tell them what to do if something serious is really happening.
+- staff response had the most determinant effect on the occupant time to start their evacuation.
+- after fire ignition and detection, occupants will spend several seconds, if not minutes, in non-evacuation actions. Time will be spent investigating and finding information to interpret the perceived cue. Once occupants are pretty 6 sure that this is indeed a fire or an emergency, they are likely to engage in behaviour such as finding children or valuables before deciding to evacuate the building.
