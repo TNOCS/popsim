@@ -3,6 +3,7 @@
     "version": "v0.0.1",
     "scripts": {
         "install": "lerna bootstrap --hoist",
+        "compile": "lerna run compile --parallel",
         "build": "lerna run build --parallel",
         "start": "lerna run start --parallel",
         "stop": "lerna run stop",
