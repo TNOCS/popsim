@@ -1,19 +1,19 @@
 {
-  "lerna": "2.0.0-rc.5",
-  "packages": [
-    "packages/*"
-  ],
-  "commands": {
-    "publish": {
-      "ignore": [
-        "ignored-file",
-        "*.md"
-      ]
+    "lerna": "2.2.0",
+    "packages": [
+        "packages/*"
+    ],
+    "commands": {
+        "publish": {
+            "ignore": [
+                "ignored-file",
+                "*.md"
+            ]
+        },
+        "bootstrap": {
+            "ignore": "component-*"
+        }
     },
-    "bootstrap": {
-      "ignore": "component-*"
-    }
-  },
-  "version": "independent",
-  "npmClient": "yarn"
+    "version": "independent",
+    "npmClient": "yarn"
 }
