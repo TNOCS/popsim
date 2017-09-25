@@ -6,6 +6,7 @@
     "types": "dist/index.d.ts",
     "scripts": {
         "compile": "tsc",
+        "compilelibs": "tsc",
         "build": "tsc -w",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
@@ -13,7 +14,7 @@
     "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
     "license": "MIT",
     "devDependencies": {
-        "@types/node": "^8.0.29",
+        "@types/node": "^8.0.30",
         "typescript": "^2.5.2"
     },
     "dependencies": {}
