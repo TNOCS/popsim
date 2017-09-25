@@ -1,4 +1,4 @@
-import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg, logger, logError } from '@popsim/common';
+import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg, logger, logError } from '@popsim/common/dist';
 import { PopulationService } from './lib/population-service';
 import { Client, Consumer, Producer } from 'kafka-node';
 import { config } from './lib/configuration';
@@ -30,7 +30,7 @@ const setupConsumer = () => {
   const consumer = new Consumer(client, [], options.options);
 
   // Refresh the metadata and create the topics at the same time.
-  client.refreshMetadata(topics, (err, resp) => {
+  client.refreshMetadata(topics, err => {
     if (err) { logError(err); }
     consumer.addTopics(topics, (error, added) => {
       if (error) { logError(error); }

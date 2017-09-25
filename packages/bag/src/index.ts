@@ -40,7 +40,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<IBuildingFeatureCollecti
   const client = new Client(conOpt.host, conOpt.clientId + '_client');
   const consumer = new Consumer(client, [], options.options);
 
-  client.refreshMetadata(topics, (err, resp) => {
+  client.refreshMetadata(topics, err => {
     if (err) { logError(err); }
     consumer.addTopics(topics, (error, added) => {
       if (error) { logError(error); }
