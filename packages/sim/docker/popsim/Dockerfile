@@ -27,7 +27,10 @@ WORKDIR popsim
 RUN yarn && \
     yarn run compilelibs && \
     yarn run compile
+# Add broker running at localhost to /etc/hosts file in order to find it.
+CMD ["/bin/sh", "-c", "echo \"127.0.0.1    broker\" >> /etc/hosts && /bin/sh"]
 #     yarn run start
+# RUN yarn start
 
 # WORKDIR popsim/packages/sim
 
@@ -36,4 +39,4 @@ RUN yarn && \
 # RUN /bin/bash
 # RUN cd popsim/packages/sim && \
 #     /bin/sh
-CMD ["/bin/sh"]
+# CMD ["/bin/sh"]
