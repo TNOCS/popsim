@@ -1,4 +1,4 @@
-import { FeatureCollection, GeometryObject } from 'GeoJSON';
+import { FeatureCollection, GeometryObject } from 'geojson';
 
 export interface IPedestrianMapMsg {
   requestId: number;

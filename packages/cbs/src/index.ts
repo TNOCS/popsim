@@ -1,6 +1,6 @@
 import { IMessage, ISimRequestMessage, ICensusFeatureCollection, ICensusFeature, ICensusProps, logger, logError } from '@popsim/common';
 import { Client, Consumer, Producer } from 'kafka-node';
-import { GeometryObject, Feature } from 'GeoJSON';
+import { GeometryObject, Feature } from 'geojson';
 import * as area from '@turf/area';
 import { config } from './lib/configuration';
 import * as pg2cbs from './lib/pg2cbs';

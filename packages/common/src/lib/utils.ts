@@ -1,5 +1,5 @@
 import { IPerson, PersonRole } from './person';
-import { Feature, Polygon } from 'GeoJSON';
+import { Feature, Polygon } from 'geojson';
 import { IHousehold } from './household';
 
 /**
