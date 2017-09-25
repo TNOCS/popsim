@@ -2,8 +2,8 @@
     "name": "@popsim/rules",
     "version": "0.0.1",
     "description": "Simple rule engine to add behaviour to the agents",
-    "main": "dist/index.js",
-    "types": "dist/index.d.ts",
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
     "scripts": {
         "compile": "tsc",
         "build": "tsc -w",
