@@ -66,14 +66,14 @@ const { sender, producer } = setupProducer();
 const consumer = setupConsumer(sender);
 
 setTimeout(() => {
-  const simStart = new Date(2018, 2, 28);
-  const simEnd   = new Date(2018, 3, 1);
+  const simStart = new Date(2018, 1, 28, 7, 30, 0); // NOTE months start at 0
+  const simEnd   = new Date(2018, 2, 1);
   const newAreaEvent = {
     id: 1,
     start: simStart.valueOf(),
     end: simEnd.valueOf(),
-    simulationStartTime: simStart.toUTCString(),
-    simulationEndTime: simEnd.toUTCString(),
+    simulationStartTime: simStart.toJSON(),
+    simulationEndTime: simEnd.toJSON(),
     bbox: [5.474495887756348, 51.44190471270124, 5.483808517456055, 51.43532386882376]
   } as ISimRequestMessage;
   sender(JSON.stringify(newAreaEvent));
