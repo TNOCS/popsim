@@ -6,6 +6,8 @@ defmodule Messenger.MessageProcessor do
   alias Crowd.Components.AgendaComponent
   alias Crowd.Services.ActivitiesRegistry
 
+  @time_step 10
+
   def handle_message(%{topic: "bagChannel", value: value}) do
     json = Poison.decode!(value)
     # IO.puts "#{key}: #{value}"
@@ -21,12 +23,12 @@ defmodule Messenger.MessageProcessor do
   def handle_message(%{topic: "simChannel", value: value}) do
     json = Poison.decode!(value)
     IO.inspect json
-    %{ "id" => id, "bbox" => _bbox, "end" => endTime, "start" => startTime } = json
-    startTime = DateTime.from_unix!(startTime, :millisecond)
-    endTime = DateTime.from_unix!(endTime, :millisecond)
+    %{ "id" => id, "bbox" => _bbox, "simulationEndTime" => simEndTime, "simulationStartTime" => simStartTime } = json
+    {:ok, startTime, offset} = DateTime.from_iso8601(simStartTime)
+    {:ok, endTime, offset}   = DateTime.from_iso8601(simEndTime)
     IO.inspect startTime
     IO.inspect endTime
-    ECS.Sim.Engine.set(startTime: startTime, endTime: endTime, dt: 1)
+    ECS.Sim.Engine.set(startTime: startTime, endTime: endTime, dt: @time_step)
     IO.puts "Ready processing simChannel message with id #{id}"
     :ok # The handle_message function MUST return :ok
   end
