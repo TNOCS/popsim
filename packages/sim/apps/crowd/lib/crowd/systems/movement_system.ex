@@ -45,30 +45,35 @@ defmodule Crowd.Systems.MovementSystem do
     v = curActivity.speed
     s = v * dt
     # IO.puts "Moved #{s}m, to go #{ds - s}m"
-    new_pos = if s >= ds do
+    updated = if s >= ds do
+      IO.puts "POSITION REACHED, current state:"
+      IO.inspect state
       # Reached goal of current activity - remove it
       [_h | t] = state[@agenda].activities;
       [next_activity_id | _] = t
       next_activity = ActivitiesRegistry.get next_activity_id
       IO.puts "Next activity: #{DateTime.to_string next_activity.start}"
-      state
+      new_state = state
       |> put_in([ @agenda, :awake], next_activity.start)
       |> put_in([ @agenda, :activities ], t)
-      %{ x: x2, y: y2 }
+      IO.puts "Final state:"
+      IO.inspect new_state
+      %{ x: x2, y: y2, state: new_state, inside?: true }
     else
       alpha = :math.atan(dy / dx)
-      %{ x: x1 + s * :math.cos(alpha), y: y1 + s * :math.sin(alpha) }
+      %{ x: x1 + s * :math.cos(alpha), y: y1 + s * :math.sin(alpha), state: state, inside?: false }
       # p = s / ds
       # %{ x: x1 + p * dx, y: y1 + p * dy }
     end
-    # IO.puts "Moved #{s}m from (#{x1}, #{y1}) -> (#{new_pos.x}, #{new_pos.y}), goal (#{x2}, #{y2}) with speed #{v}m/s."
+    # IO.puts "Moved #{s}m from (#{x1}, #{y1}) -> (#{updated.x}, #{updated.y}), goal (#{x2}, #{y2}) with speed #{v}m/s."
     # case [h | _] = state[@agenda].activities do
     # if (["2a93b83e-2673-4899-bf12-ed920dbef001" | _] = state[@agenda].activities) do
-    #   IO.puts "Moved #{s}m from (#{x1}, #{y1}) -> (#{new_pos.x}, #{new_pos.y}) with speed #{v}m/s."
+    #   IO.puts "Moved #{s}m from (#{x1}, #{y1}) -> (#{updated.x}, #{updated.y}) with speed #{v}m/s."
     # end
-    state
+    updated.state
     |> put_in([ @moveable, :speed ], v)
-    |> put_in([ @position, :x ], new_pos.x)
-    |> put_in([ @position, :y ], new_pos.y)
+    |> put_in([ @position, :x ], updated.x)
+    |> put_in([ @position, :y ], updated.y)
+    |> put_in([ @position, :inside? ], updated.inside?)
   end
 end
