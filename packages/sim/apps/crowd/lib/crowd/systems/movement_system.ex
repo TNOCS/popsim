@@ -46,22 +46,25 @@ defmodule Crowd.Systems.MovementSystem do
     s = v * dt
     # IO.puts "Moved #{s}m, to go #{ds - s}m"
     updated = if s >= ds do
-      IO.puts "POSITION REACHED, current state:"
-      IO.inspect state
+      # IO.puts "POSITION REACHED, current state:"
+      # IO.inspect state
       # Reached goal of current activity - remove it
       [_h | t] = state[@agenda].activities;
       [next_activity_id | _] = t
       next_activity = ActivitiesRegistry.get next_activity_id
-      IO.puts "Next activity: #{DateTime.to_string next_activity.start}"
+      # IO.puts "Next activity: #{DateTime.to_string next_activity.start}"
       new_state = state
       |> put_in([ @agenda, :awake], next_activity.start)
       |> put_in([ @agenda, :activities ], t)
-      IO.puts "Final state:"
-      IO.inspect new_state
+      # IO.puts "Final state:"
+      # IO.inspect new_state
       %{ x: x2, y: y2, state: new_state, inside?: true }
     else
-      alpha = :math.atan(dy / dx)
-      %{ x: x1 + s * :math.cos(alpha), y: y1 + s * :math.sin(alpha), state: state, inside?: false }
+      case dx do
+        0 -> %{ x: x1, y: y1 + s, state: state, inside?: false }
+        _ -> alpha = :math.atan(dy / dx)
+             %{ x: x1 + s * :math.cos(alpha), y: y1 + s * :math.sin(alpha), state: state, inside?: false }
+      end
       # p = s / ds
       # %{ x: x1 + p * dx, y: y1 + p * dy }
     end
