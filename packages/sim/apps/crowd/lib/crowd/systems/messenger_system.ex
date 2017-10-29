@@ -43,7 +43,7 @@ defmodule Crowd.Systems.MessengerSystem do
     msg = entities
     |> Enum.reduce([], fn({ entity, _mask }, acc) -> [extract_properties_to_send(entity) | acc] end)
     |> convert_to_json
-    # IO.inspect msg
+    IO.inspect msg
     Kaffe.Producer.produce_sync("crowdChannel", msg)
   end
 
@@ -51,12 +51,22 @@ defmodule Crowd.Systems.MessengerSystem do
     Agent.get(entity.pid, fn s ->
       %{
         entity.id => %{
-          x: s[@position].x,
-          y: s[@position].y,
-          v: s[@moveable].speed
+          id: entity.id,
+          x: truncate(s[@position].x),
+          y: truncate(s[@position].y),
+          v: truncate(s[@moveable].speed),
+          vx: truncate(get_in(s, [@moveable, :vx])),
+          vy: truncate(get_in(s, [@moveable, :vy]))
         }
       }
     end)
+  end
+
+  defp truncate(x) do
+    case x do
+      x when is_number(x) -> round(1000 * x) / 1000
+      _ -> nil
+    end
   end
 
   defp convert_to_json(entities) do

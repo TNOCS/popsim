@@ -138,8 +138,8 @@ defmodule ECS.Sim.Engine do
   end
 
   def handle_info(:run, state) do
-    IO.puts "RUN:"
-    IO.inspect state
+    # IO.puts "RUN:"
+    IO.puts "Current time: #{state.curTime}"
     # time = DateTime.utc_now()
 
     # Do the desired work here

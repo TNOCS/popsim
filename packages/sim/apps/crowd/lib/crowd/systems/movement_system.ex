@@ -15,7 +15,7 @@ defmodule Crowd.Systems.MovementSystem do
   end
 
   def update(time, dt) do
-    IO.puts "Updating movements, mask: #{@mask}"
+    # IO.puts "Updating movements, mask: #{@mask}"
     ECS.Registry.get(@mask)
     |> Enum.each(fn { entity, _mask } -> awake?(time, dt, entity) end)
   end
@@ -58,12 +58,14 @@ defmodule Crowd.Systems.MovementSystem do
       |> put_in([ @agenda, :activities ], t)
       # IO.puts "Final state:"
       # IO.inspect new_state
-      %{ x: x2, y: y2, state: new_state, inside?: true }
+      %{ x: x2, y: y2, vx: 0, vy: 0, state: new_state, inside?: true }
     else
       case dx do
-        0 -> %{ x: x1, y: y1 + s, state: state, inside?: false }
+        0 -> %{ x: x1, y: y1 + s, vx: v, vy: 0, state: state, inside?: false }
         _ -> alpha = :math.atan(dy / dx)
-             %{ x: x1 + s * :math.cos(alpha), y: y1 + s * :math.sin(alpha), state: state, inside?: false }
+             vx = :math.cos(alpha) * v
+             vy = :math.sin(alpha) * v
+             %{ x: x1 + dt * vx, y: y1 + dt * vy, vx: vx, vy: vy, state: state, inside?: false }
       end
       # p = s / ds
       # %{ x: x1 + p * dx, y: y1 + p * dy }
@@ -75,6 +77,8 @@ defmodule Crowd.Systems.MovementSystem do
     # end
     updated.state
     |> put_in([ @moveable, :speed ], v)
+    |> put_in([ @moveable, :vx ], updated.vx)
+    |> put_in([ @moveable, :vy ], updated.vy)
     |> put_in([ @position, :x ], updated.x)
     |> put_in([ @position, :y ], updated.y)
     |> put_in([ @position, :inside? ], updated.inside?)
