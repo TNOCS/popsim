@@ -22,10 +22,9 @@ const setupConsumer = (sender: (msg: string) => void) => {
     });
   });
 
-  // consumer.on('message', (message: string) => {
-  //   log(JSON.stringify(message, null, 2).substr(0, 1024));
-  //   // sender(message);
-  // });
+  consumer.on('message', m => {
+    log(JSON.stringify(m, null, 2).substr(0, 1024));
+  });
 
   consumer.on('error', (err: Error) => {
     logError(err);
