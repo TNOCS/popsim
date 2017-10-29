@@ -85,4 +85,15 @@ defmodule ECS.Registry do
       # end)
     end)
   end
+
+  @doc """
+    Get all entities using a component mask that have the required components and satisfy the filter.
+  """
+  @spec get(integer, function) :: [%ECS.Entity{}]
+  def get(mask, filter) do
+    Agent.get(@name, fn(registry) ->
+      registry
+      |> Enum.filter(fn ( {entity, component_mask} ) -> mask == (component_mask &&& mask) && filter.(entity) end)
+    end)
+  end
 end
