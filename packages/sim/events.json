@@ -1,0 +1,35 @@
+[{
+    "type": "Feature",
+    "properties": {
+        "id": "event1",
+        "name": "Attracting people to a location",
+        "start": "2018-02-28T06:30:00.000Z",
+        "end": "2018-02-28T07:30:00.000Z",
+        "type": "attract",
+        "radius": 500
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            5.478465557098389,
+            51.43929623052795
+        ]
+    }
+}, {
+    "type": "Feature",
+    "properties": {
+        "id": "event2",
+        "name": "Repelling people from a location",
+        "start": "2018-02-28T06:50:00.000Z",
+        "end": "2018-02-28T08:30:00.000Z",
+        "type": "repel",
+        "radius": 500
+    },
+    "geometry": {
+        "type": "Point",
+        "coordinates": [
+            5.48,
+            51.44
+        ]
+    }
+}]

@@ -21,7 +21,13 @@ defmodule Crowd.Sim do
 
   def start(_type, _args) do
     children = [
-      { ECS.Sim, [ Crowd.Systems.WakeUpSystem, Crowd.Systems.MovementSystem, Crowd.Systems.MessengerSystem] },
+      { ECS.Sim, [
+          Crowd.Systems.EventSystem,
+          Crowd.Systems.WakeUpSystem,
+          Crowd.Systems.MovementSystem,
+          Crowd.Systems.MessengerSystem
+        ]
+      },
       { Crowd.Services.ActivitiesRegistry, [] }
     ]
 
