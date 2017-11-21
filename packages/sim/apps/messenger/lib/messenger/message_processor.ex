@@ -6,7 +6,7 @@ defmodule Messenger.MessageProcessor do
   alias Crowd.Components.AgendaComponent
   alias Crowd.Services.ActivitiesRegistry
 
-  @time_step 10
+  @time_step 60
 
   def handle_message(%{topic: "bagChannel", value: value}) do
     json = Poison.decode!(value)
