@@ -1,5 +1,5 @@
-import { ISimRequestMessage, IMessage, IPopulationMsg, IBuildingFeatureCollection, logger, logError, IWorkforceMsg } from '@popsim/common';
-import { Client, ProduceRequest, Consumer, Producer } from 'kafka-node';
+import { ISimRequestMessage, IPopulationMsg, IBuildingFeatureCollection, logger, logError, IWorkforceMsg } from '@popsim/common';
+import { Client, ProduceRequest, Consumer, Producer, Message } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { WorkforceService } from './lib/workforce-service';
@@ -40,7 +40,7 @@ const setupConsumer = () => {
     });
   });
 
-  consumer.on('message', (message: IMessage) => {
+  consumer.on('message', (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'popChannel':

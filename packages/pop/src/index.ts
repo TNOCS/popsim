@@ -1,6 +1,6 @@
 import { ICensusFeatureCollection, IBuildingFeatureCollection, IPopulationMsg, logger, logError } from '@popsim/common/dist';
 import { PopulationService } from './lib/population-service';
-import { Client, Consumer, Producer } from 'kafka-node';
+import { Client, Consumer, Producer, Message } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 
@@ -38,7 +38,7 @@ const setupConsumer = () => {
     });
   });
 
-  consumer.on('message', (message: IMessage) => {
+  consumer.on('message', (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'cbsChannel':

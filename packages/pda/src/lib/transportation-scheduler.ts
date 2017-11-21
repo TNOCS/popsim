@@ -24,10 +24,10 @@ export const createTransportationScheduler = () => {
     const duration = state.travelDistance / speed * 1000; // msec
     if (state.departureTime) {
       const arrivalTime = new Date(state.departureTime.valueOf() + duration);
-      createAgendaItem(`Travelling at ${options.speedKmh}km/h`, speed, state.departureTime, arrivalTime, options.activityType, state.destination, [ state.employee ]);
+      createAgendaItem(`Travelling at ${options.speedKmh}km/h`, speed, state.departureTime, arrivalTime, options.activityType, state.destination, [state.employee]);
     } else if (state.arrivalTime) {
       const departureTime = new Date(state.arrivalTime.valueOf() - duration);
-      createAgendaItem(`Travelling at ${options.speedKmh}km/h`, speed, departureTime, state.arrivalTime, options.activityType, state.destination, [ state.employee ]);
+      createAgendaItem(`Travelling at ${options.speedKmh}km/h`, speed, departureTime, state.arrivalTime, options.activityType, state.destination, [state.employee]);
     }
   };
 

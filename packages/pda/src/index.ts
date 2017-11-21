@@ -1,5 +1,5 @@
-import { ISimRequestMessage, IMessage, IPopulationMsg, logger, logError, ActivityManager, IPersonsMsg, IActivitiesMsg } from '@popsim/common';
-import { Client, Consumer, Producer } from 'kafka-node';
+import { ISimRequestMessage, IPopulationMsg, logger, logError, ActivityManager, IPersonsMsg, IActivitiesMsg } from '@popsim/common';
+import { Client, Consumer, Producer, Message } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { PdaService } from './lib/pda-service';
@@ -38,7 +38,7 @@ const setupConsumer = () => {
     });
   });
 
-  consumer.on('message', (message: IMessage) => {
+  consumer.on('message', (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'pop2Channel':

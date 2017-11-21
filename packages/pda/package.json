@@ -13,10 +13,10 @@
     "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
     "license": "MIT",
     "devDependencies": {
-        "@types/geojson": "^1.0.3",
+        "@types/geojson": "^1.0.6",
         "@types/kafka-node": "^2.0.3",
-        "@types/node": "^8.0.29",
-        "typescript": "^2.5.2"
+        "@types/node": "^8.0.53",
+        "typescript": "^2.6.1"
     },
     "dependencies": {
         "@popsim/common": "^1.0.0",

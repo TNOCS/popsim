@@ -1,5 +1,5 @@
-import { IBuildingFeatureCollection, ISimRequestMessage, IMessage, logger, logError, IPedestrianMapMsg, IPedestrianGraphMsg } from '@popsim/common';
-import { Client, Consumer, Producer } from 'kafka-node';
+import { IBuildingFeatureCollection, ISimRequestMessage, logger, logError, IPedestrianMapMsg, IPedestrianGraphMsg } from '@popsim/common';
+import { Client, Consumer, Producer, Message } from 'kafka-node';
 import { config } from './lib/configuration';
 import { EventEmitter } from 'events';
 import { NavService } from './lib/nav-service';
@@ -36,7 +36,7 @@ const setupConsumer = () => {
     });
   });
 
-  consumer.on('message', (message: IMessage) => {
+  consumer.on('message', (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'bagChannel':

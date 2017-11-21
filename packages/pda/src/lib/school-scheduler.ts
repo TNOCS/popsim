@@ -30,7 +30,7 @@ export const CreateSchoolScheduler = (startTime: Date) => {
   const alreadyGoingToSchool = (parent: IPerson, child: IPerson, school: ILocation) => {
     if (!parent.agenda) { return false; }
     const activityAgenda = activityManager.getActivities(parent.agenda);
-    const a = activityAgenda.reduce((prev, cur) => prev === null && cur.location.bId === school.bId ? cur : prev, undefined);
+    const a = activityAgenda.reduce((prev, cur) => prev === null && cur.location.bId === school.bId ? cur : prev);
     if (!a) { return false; }
     addPersonToActivity(child, a);
     return true;

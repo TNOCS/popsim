@@ -24,7 +24,7 @@ export type RuleEvaluator = (state: IState) => number | string | boolean;
  * @returns
  */
 export const RuleEngineFactory = <T extends IState, U extends IActionOptions>(ruleSet: IRuleSet,
-  actions: { [name: string]: Action },
+  actions: { [name: string]: Action<T, U> },
   evaluators?: { [property: string]: RuleEvaluator }) => {
 
   /**

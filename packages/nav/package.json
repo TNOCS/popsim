@@ -13,19 +13,19 @@
     "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
     "license": "MIT",
     "devDependencies": {
-        "@types/geojson": "^1.0.3",
+        "@types/geojson": "^1.0.6",
         "@types/kafka-node": "^2.0.3",
-        "@types/node": "^8.0.29",
-        "@types/request": "^2.0.3",
+        "@types/node": "^8.0.53",
+        "@types/request": "^2.0.8",
         "@types/osmtogeojson": "2.2.29",
-        "typescript": "^2.5.2"
+        "typescript": "^2.6.1"
     },
     "dependencies": {
         "@popsim/common": "^1.0.0",
         "@popsim/rules": "^0.0.1",
-        "kafka-node": "^2.2.3",
-        "@turf/union": "^4.7.3",
-        "request": "^2.82.0",
+        "kafka-node": "^2.3.0",
+        "@turf/union": "^5.0.4",
+        "request": "^2.83.0",
         "osmtogeojson": "^3.0.0-beta.2"
     }
 }

@@ -1,5 +1,5 @@
-import { ISimRequestMessage, IMessage, IBuildingFeatureCollection, logger, logError } from '@popsim/common';
-import { Client, Consumer, Producer, ProduceRequest } from 'kafka-node';
+import { ISimRequestMessage, IBuildingFeatureCollection, logger, logError } from '@popsim/common';
+import { Client, Consumer, Producer, ProduceRequest, Message } from 'kafka-node';
 import { config } from './lib/configuration';
 import * as pg2bag from './lib/pg2bag';
 
@@ -48,7 +48,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<IBuildingFeatureCollecti
     });
   });
 
-  consumer.on('message', async (message: IMessage) => {
+  consumer.on('message', async (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'simChannel':

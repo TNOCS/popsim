@@ -1,5 +1,5 @@
-import { IMessage, ISimRequestMessage, ICensusFeatureCollection, ICensusFeature, ICensusProps, logger, logError } from '@popsim/common';
-import { Client, Consumer, Producer } from 'kafka-node';
+import { ISimRequestMessage, ICensusFeatureCollection, ICensusFeature, ICensusProps, logger, logError } from '@popsim/common';
+import { Client, Consumer, Producer, Message } from 'kafka-node';
 import { GeometryObject, Feature } from 'geojson';
 import * as area from '@turf/area';
 import { config } from './lib/configuration';
@@ -85,7 +85,7 @@ const setupConsumer = (svc: (bbox: number[]) => Promise<ICensusFeatureCollection
     });
   });
 
-  consumer.on('message', async (message: IMessage) => {
+  consumer.on('message', async (message: Message) => {
     const topic = message.topic;
     switch (topic) {
       case 'simChannel':
