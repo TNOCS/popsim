@@ -42,7 +42,7 @@ config :kaffe,
   ],
   producer: [
     endpoints: [localhost: 9092], # [hostname: port]
-    topics: ["crowdChannel"],
+    topics: ["crowdChannel", "timeChannel"],
     # optional
     partition_strategy: :md5
   ]

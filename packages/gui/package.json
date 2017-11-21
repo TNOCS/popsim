@@ -13,13 +13,15 @@
     "author": "Erik Vullings <erik.vullings@gmail.com> (http://www.tno.nl)",
     "license": "MIT",
     "devDependencies": {
-        "@types/geojson": "^1.0.3",
+        "@types/geojson": "^1.0.5",
         "@types/kafka-node": "^2.0.3",
-        "@types/node": "^8.0.29",
-        "typescript": "^2.5.2"
+        "@types/websocket": "^0.0.34",
+        "@types/node": "^8.0.47",
+        "typescript": "^2.5.3"
     },
     "dependencies": {
         "@popsim/common": "^1.0.0",
-        "kafka-node": "^2.2.3"
+        "kafka-node": "^2.2.3",
+        "websocket": "^1.0.25"
     }
 }

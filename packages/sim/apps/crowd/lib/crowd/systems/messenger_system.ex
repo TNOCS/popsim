@@ -20,6 +20,10 @@ defmodule Crowd.Systems.MessengerSystem do
       # {:error, reason} -> IO.puts reason
       _ -> :ok
     end
+    case Kaffe.Producer.produce_sync("timeChannel", []) do
+      _ -> :ok
+     {:error, reason} -> IO.puts " ERROR creating timeChannel: #{reason}"
+    end
   end
 
   def update(time, _dt) do
@@ -35,16 +39,28 @@ defmodule Crowd.Systems.MessengerSystem do
     end)
     if (send?) do
       IO.puts "Sending positions at #{time}, mask: #{@mask}"
-      Task.start fn -> send_entities(ECS.Registry.get(@mask)) end
+      Task.start fn ->
+        send_time(time)
+        send_entities(ECS.Registry.get(@mask))
+      end
     end
   end
 
-  def send_entities(entities) do
+  defp send_entities(entities) do
     msg = entities
     |> Enum.reduce([], fn({ entity, _mask }, acc) -> [extract_properties_to_send(entity) | acc] end)
     |> convert_to_json
     IO.inspect msg
     Kaffe.Producer.produce_sync("crowdChannel", msg)
+  end
+
+  defp send_time(time) do
+    IO.inspect time
+    IO.inspect DateTime.to_iso8601(time)
+    case Kaffe.Producer.produce_sync("timeChannel", "time", DateTime.to_iso8601(time)) do
+      :ok -> IO.puts "Send time successfully"
+      { :error, reason } -> IO.puts "Error sending time message: #{reason}"
+    end
   end
 
   defp extract_properties_to_send(entity) do

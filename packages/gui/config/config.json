@@ -22,6 +22,9 @@
             }, {
                 "topic": "crowdChannel",
                 "partition": 0
+            }, {
+                "topic": "timeChannel",
+                "partition": 0
             }],
             "options": {
                 "autoCommit": false,
