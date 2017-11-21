@@ -2,6 +2,8 @@ defmodule Crowd.Systems.MessengerSystem do
   @moduledoc """
   Processes all entities that have a position, and outputs their position to the Kafka bus.
   """
+  require Logger
+
   @behaviour ECS.System
 
   alias Crowd.Components.PositionComponent
@@ -10,7 +12,7 @@ defmodule Crowd.Systems.MessengerSystem do
   @mask Crowd.Utils.create_mask( PositionComponent.new )
   @position PositionComponent.name
   @moveable MoveableComponent.name
-  @time_between_messages_in_seconds 5
+  @time_between_messages_in_seconds 600
 
   def init(_time, _dt) do
     Agent.start_link(fn -> %{ lastMsg: DateTime.utc_now } end, name: __MODULE__)
@@ -21,17 +23,16 @@ defmodule Crowd.Systems.MessengerSystem do
       _ -> :ok
     end
     case Kaffe.Producer.produce_sync("timeChannel", []) do
+      {:error, reason} -> IO.puts " ERROR creating timeChannel: #{reason}"
       _ -> :ok
-     {:error, reason} -> IO.puts " ERROR creating timeChannel: #{reason}"
     end
   end
 
   def update(time, _dt) do
     send? = Agent.get_and_update(__MODULE__, fn state ->
-      now = DateTime.utc_now;
-      dif = DateTime.diff(now, state.lastMsg) # Difference in seconds
+      dif = DateTime.diff(time, state.lastMsg) # Difference in seconds
       if ( dif > @time_between_messages_in_seconds) do
-        newState = %{ state | lastMsg: now }
+        newState = %{ state | lastMsg: time }
         { true, newState }
       else
         { false, state }
@@ -41,16 +42,17 @@ defmodule Crowd.Systems.MessengerSystem do
       IO.puts "Sending positions at #{time}, mask: #{@mask}"
       Task.start fn ->
         send_time(time)
-        send_entities(ECS.Registry.get(@mask))
+        send_entities(ECS.Registry.get(@mask), time)
       end
     end
   end
 
-  defp send_entities(entities) do
+  defp send_entities(entities, time) do
     msg = entities
-    |> Enum.reduce([], fn({ entity, _mask }, acc) -> [extract_properties_to_send(entity) | acc] end)
+    |> Enum.reduce([%{ time: DateTime.to_iso8601(time)}], fn({ entity, _mask }, acc) -> [extract_properties_to_send(entity) | acc] end)
     |> convert_to_json
-    IO.inspect msg
+    # IO.inspect msg
+    Logger.info fn -> msg end
     Kaffe.Producer.produce_sync("crowdChannel", msg)
   end
 

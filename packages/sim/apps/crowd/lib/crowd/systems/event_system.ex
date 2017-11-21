@@ -57,6 +57,7 @@ defmodule Crowd.Systems.EventSystem do
   defp activate_event(f) do
     type = f["properties"]["type"]
     # IO.puts "Activating '#{type}' event: #{f["properties"]["name"]}"
+    Logger.info fn -> "Activating '#{type}' event: #{f["properties"]["name"]}" end
     case type do
       "attract" -> attract_event(f)
       "repel" -> repel_event(f)

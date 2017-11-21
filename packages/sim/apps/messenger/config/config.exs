@@ -46,3 +46,11 @@ config :kaffe,
     # optional
     partition_strategy: :md5
   ]
+
+config :logger,
+  backends: [{LoggerFileBackend, :info}],
+  truncate: :infinity
+
+config :logger, :info,
+  path: "/tmp/people.log",
+  level: :info
