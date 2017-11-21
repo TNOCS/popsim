@@ -117,7 +117,10 @@ export class NavService {
    */
   private async createNavigationMap() {
     log('Starting to merge features...');
-    if (typeof union !== 'function') { return { type: 'FeatureCollection', features: [] } as FeatureCollection<MultiPolygon>; }
+    if (typeof union !== 'function') {
+      console.error('NAV-SERVICE not working');
+      return { type: 'FeatureCollection', features: [] } as FeatureCollection<MultiPolygon>;
+    }
     const newMap = <FeatureCollection<MultiPolygon>>{
       type: 'FeatureCollection',
       features: await [union(...this.bag.features)]
