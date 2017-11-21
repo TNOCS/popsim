@@ -125,8 +125,8 @@ const { sender, producer } = setupProducer();
 const consumer = setupConsumer(sender);
 
 setTimeout(() => {
-  const simStart = new Date(2018, 1, 28, 7, 30, 0); // NOTE months start at 0
-  const simEnd = new Date(2018, 2, 1);
+  const simStart = new Date(2018, 0, 28, 7, 30, 0); // NOTE months start at 0
+  const simEnd = new Date(2018, 0, 30);
   const newAreaEvent = {
     id: 1,
     start: simStart.valueOf(),
