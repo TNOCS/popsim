@@ -66,7 +66,7 @@ export const RuleEngineFactory = <T extends IState, U extends IActionOptions>(ru
     }
   };
 
-  const triggerAction = (state: T, actionName: string, options?: U) => {
+  const triggerAction = (state: T, actionName: string, options: U) => {
     if (!actions.hasOwnProperty(actionName)) {
       console.warn(`Warning: Cannot resolve action ${actionName}.`);
       return;

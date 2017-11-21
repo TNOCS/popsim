@@ -3,7 +3,7 @@ import * as distance from '@turf/distance';
 import { stringToDate, createAgendaItem } from './utils';
 import { IPerson, ILocation, random, ActivityType, PersonRole, LocationType } from '@popsim/common';
 import { config } from './configuration';
-import { RuleEngineFactory, IState, IActionOptions } from '@popsim/rules';
+import { RuleEngineFactory, IState, IActionOptions, Action } from '@popsim/rules';
 
 interface IWorkState extends IState {
   employee: IPerson;
@@ -27,7 +27,7 @@ export const CreateWorkScheduler = (startTime: Date) => {
 
   const transportationScheduler = createTransportationScheduler();
 
-  const assignHours = (state: IWorkState, options: IWorkOptions) => {
+  const assignHours: Action<IWorkState, IWorkOptions> = (state: IWorkState, options: IWorkOptions) => {
     const { employee, workplace } = state;
     const selectedShift = Math.max(0, (options.shiftRatios.reduce((prev, cur, i) => {
       if (prev.i > -1 || prev.rand > cur) { return prev; }
