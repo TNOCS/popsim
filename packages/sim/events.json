@@ -3,8 +3,8 @@
     "properties": {
         "id": "event1",
         "name": "Attracting people to a location",
-        "start": "2018-02-28T06:30:00.000Z",
-        "end": "2018-02-28T07:30:00.000Z",
+        "start": "2018-01-29T06:30:00.000Z",
+        "end": "2018-01-29T07:30:00.000Z",
         "type": "attract",
         "radius": 500
     },
@@ -20,8 +20,8 @@
     "properties": {
         "id": "event2",
         "name": "Repelling people from a location",
-        "start": "2018-02-28T06:50:00.000Z",
-        "end": "2018-02-28T08:30:00.000Z",
+        "start": "2018-01-29T06:50:00.000Z",
+        "end": "2018-01-29T08:30:00.000Z",
         "type": "repel",
         "radius": 500
     },
