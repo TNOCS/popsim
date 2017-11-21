@@ -56,8 +56,6 @@ wsServer.on('request', function (request) {
   });
 });
 
-
-
 process.title = config.kafka.clientId;
 
 const conOpt = config.kafka;
